@@ -4,6 +4,14 @@ const { permit, permitSelfOr } = require('../middleware/authorize');
 const validation        = require('../middleware/validation');
 const userController    = require('../controllers/userController');
 
+
+// self reads a user
+router.get(
+  '/me',
+  authMiddleware,
+  userController.getCurrentUser
+);
+
 // Admin creates any user, incl. new admins
 router.post(
   '/',
