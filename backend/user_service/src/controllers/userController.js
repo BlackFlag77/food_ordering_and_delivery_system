@@ -114,6 +114,24 @@ exports.deleteUser = async (req, res, next) => {
 };
 
 /**
+ * GET /users/me
+ * Returns the currently‑logged‑in user.
+ */
+exports.getCurrentUser = async (req, res, next) => {
+  try {
+    // req.user.id was set by authMiddleware
+    const user = await User.findById(req.user.id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+/**
  * Delivery personnel → view assigned deliveries.
  * - stub: in real life, query Orders by req.user.id
  */
