@@ -1,0 +1,32 @@
+# version: '3.8'
+# services:
+#   user-service-backend:
+#     image: user_service            # build/pull your existing backend image
+#     env_file:
+#       - ../backend/user_service/.env            # point to your backend .env
+#     ports:
+#       - "5000:5000"
+#   frontend:
+#     build: .
+#     ports:
+#       - "3000:80"
+#     depends_on:
+#       - user-service-backend
+
+services:
+  user-service-backend:
+    container_name: user-service-backend
+    image: user_service
+    env_file:
+      - ../backend/user_service/.env
+    ports:
+      - "5000:5000"
+
+  frontend:
+    build: .
+    container_name: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - user-service-backend
+

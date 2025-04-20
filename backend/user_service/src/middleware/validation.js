@@ -11,7 +11,7 @@ const selfRegisterSchema = Joi.object({
                 .message('Password must be 8+ chars, include upper, lower, number & special')
                 .required(),
   role:     Joi.string()
-                .valid('customer')
+                .valid('customer','restaurant_admin')
                 .default('customer')
 });
 
@@ -23,10 +23,9 @@ const updateSchema = Joi.object({
                 .message('Password must be 8+ chars, include upper, lower, number & special')
                 ,
   role:     Joi.string()
-                .valid('customer')
-                .default('customer')
+                .valid('customer','restaurant_admin','delivery_personnel','admin')
+                .required()
 });
-
 
 const adminCreateSchema = Joi.object({
   name:     selfRegisterSchema.extract('name'),
@@ -38,9 +37,10 @@ const adminCreateSchema = Joi.object({
 });
 
 const loginSchema = Joi.object({
-  name: Joi.string().min(2).max(50).required(),
-  password: Joi.string().required()
+  nameOrEmail: Joi.string().min(2).max(100).required(),
+  password:    Joi.string().required()
 });
+
 
 // Validate payload for public registration (no admin)
 exports.selfRegisterValidation = (req, res, next) => {
@@ -76,3 +76,4 @@ exports.loginValidation = (req, res, next) => {
   }
   next();
 };
+

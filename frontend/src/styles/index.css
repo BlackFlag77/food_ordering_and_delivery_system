@@ -1,0 +1,71 @@
+/* Root reset & variables */
+:root {
+    --primary: #ff6f61;
+    --accent: #4a4e69;
+    --bg: #f2e9e4;
+    --font: 'Segoe UI', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: var(--font);
+    background: var(--bg) url('/background.jpg') no-repeat center/cover;
+    min-height: 100vh;
+  }
+  a { text-decoration: none; color: inherit; }
+  button {
+    cursor: pointer;
+    padding: 0.5em 1em;
+    border: none;
+    background: var(--primary);
+    color: white;
+    border-radius: 4px;
+    transition: 0.2s;
+  }
+  button:hover { opacity: 0.9; }
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: rgba(255,255,255,0.85);
+    border-radius: 8px;
+  }
+  .header { display: flex; justify-content: space-between; align-items: center; }
+  .nav { display: flex; gap: 1em; }
+  .form-group { margin-bottom: 1em; }
+  input, select {
+    width: 100%;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .modal, .drawer {
+    position: fixed;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 1000;
+  }
+  .modal { top: 50%; left:50%; transform: translate(-50%,-50%); padding:2em; border-radius:8px; }
+  .drawer { top:0; right:0; height:100%; width: 320px; padding:1em; overflow:auto; }
+  .backdrop {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.5); z-index:900;
+  }
+  .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2em;
+    z-index: 1000;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+  
+  .backdrop {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 900;
+  }

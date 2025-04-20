@@ -74,6 +74,10 @@ exports.updateUser = async (req, res, next) => {
     //const updates = { name: req.body.name};
     const updates = { name: req.body.name,email: req.body.email,password: req.body.password };
 
+    if (req.body.password) {
+      updates.password = await bcrypt.hash(req.body.password, 12); // hash before saving
+    }
+
     if (req.user.role === 'admin' && req.body.role) {
       updates.role = req.body.role;
     }
