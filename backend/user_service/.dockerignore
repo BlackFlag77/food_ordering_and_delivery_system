@@ -1,0 +1,15 @@
+# # dependencies
+# node_modules
+# npm-debug.log
+
+# # source control
+# .git
+# .gitignore
+
+# # logs, coverage, OS cruft
+# logs
+# coverage
+# *.log
+
+# # tests (if you don’t need them in the production image)
+# **/*.test.js

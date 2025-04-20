@@ -18,23 +18,26 @@ exports.register = async ({ name, email, password, role }) => {
     name, email, password: hashedPassword, role
   }).save();
 
-  // const token = jwt.sign(
-  //   { user: { id: newUser.id, role: newUser.role } },
-  //   process.env.JWT_SECRET,
-  //   { expiresIn: process.env.JWT_EXPIRES_IN }
-  // );
+  const token = jwt.sign(
+    { user: { id: newUser.id, role: newUser.role } },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN }
+  );
 
-  return { message: 'Registration successful'};
-  //return { message: 'Registration successful', token };
+  //return { message: 'Registration successful'};
+  return { message: 'Registration successful', token };
 
 };
 
-/**
- * Logs in a user, returns { token }
- * Throws 400 on invalid credentials.
- */
-exports.login = async ({ name, password }) => {
-  const existingUser = await User.findOne({ name });
+exports.login = async ({ nameOrEmail, password }) => {
+  // look up by name OR email
+  const existingUser = await User.findOne({
+    $or: [
+      { name: nameOrEmail },
+      { email: nameOrEmail }
+    ]
+  });
+
   if (!existingUser) {
     const err = new Error('Invalid credentials');
     err.statusCode = 400;
@@ -54,5 +57,37 @@ exports.login = async ({ name, password }) => {
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
 
-  return { message: 'Login successful', token , user: { id: existingUser.id, role: existingUser.role}};
+  return {
+    message: 'Login successful',
+    token,
+    user: { id: existingUser.id, role: existingUser.role }
+  };
 };
+
+/**
+ * Logs in a user, returns { token }
+ * Throws 400 on invalid credentials.
+ */
+// exports.login = async ({ name, password }) => {
+//   const existingUser = await User.findOne({ name });
+//   if (!existingUser) {
+//     const err = new Error('Invalid credentials');
+//     err.statusCode = 400;
+//     throw err;
+//   }
+
+//   const isMatch = await bcrypt.compare(password, existingUser.password);
+//   if (!isMatch) {
+//     const err = new Error('Invalid credentials');
+//     err.statusCode = 400;
+//     throw err;
+//   }
+
+//   const token = jwt.sign(
+//     { user: { id: existingUser.id, role: existingUser.role } },
+//     process.env.JWT_SECRET,
+//     { expiresIn: process.env.JWT_EXPIRES_IN }
+//   );
+
+//   return { message: 'Login successful', token , user: { id: existingUser.id, role: existingUser.role}};
+// };

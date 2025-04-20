@@ -1,0 +1,101 @@
+import React, { useEffect, useState, useContext } from 'react';
+import api from '../../api/axios';
+import CreateUserModal from '../../components/CreateUserModal';
+import EditUserModal from '../../components/EditUserModal';
+import UserDetailDrawer from '../../components/UserDetailDrawer';
+import { AuthContext } from '../../context/AuthContext';
+
+export default function UserListPage() {
+  const { user } = useContext(AuthContext);
+  const [users, setUsers] = useState([]);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editUser, setEditUser] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [drawerUser, setDrawerUser] = useState(null);
+
+  const fetch = () => {
+    api.get('/users')
+      .then(r => setUsers(r.data))
+      .catch(console.error);
+  };
+
+  useEffect(fetch, []);
+
+  const onCreate = () => setShowCreateModal(true);
+
+  const onEdit = (user) => {
+    setEditUser(user);
+    setShowEditModal(true);
+  };
+
+  const onDelete = async (id) => {
+    if (window.confirm('Delete user?')) {
+      await api.delete(`/users/${id}`);
+      fetch();
+    }
+  };
+
+  return (
+    <div className="container">
+      <h2>Manage Users</h2>
+      <button onClick={onCreate}>Create User</button>
+      <table style={{ width: '100%', marginTop: '1em', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          {users.map(u => (
+            <tr key={u._id} style={{ borderTop: '1px solid #ddd' }}>
+              <td onClick={() => setDrawerUser(u)} style={{ cursor: 'pointer' }}>{u.name}</td>
+              <td>{u.email}</td>
+              <td>{u.role}</td>
+              <td>
+                <button onClick={() => onEdit(u)}>Edit</button>{' '}
+                <button onClick={() => onDelete(u._id)}>Delete</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Create Modal */}
+      {showCreateModal && (
+        <CreateUserModal
+          onClose={() => setShowCreateModal(false)}
+          onCreated={() => {
+            setShowCreateModal(false);
+            fetch();
+          }}
+        />
+      )}
+
+      {/* Edit Modal */}
+      {editUser && showEditModal && (
+        <EditUserModal
+          user={editUser}
+          onClose={() => {
+            setShowEditModal(false);
+            setEditUser(null);
+          }}
+          onSaved={() => {
+            setShowEditModal(false);
+            setEditUser(null);
+            fetch();
+          }}
+        />
+      )}
+
+      {/* Drawer */}
+      {drawerUser && (
+        <UserDetailDrawer
+          user={drawerUser}
+          onClose={() => setDrawerUser(null)}
+          onUpdated={() => {
+            setDrawerUser(null);
+            fetch();
+          }}
+        />
+      )}
+    </div>
+  );
+}
