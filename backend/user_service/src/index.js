@@ -4,6 +4,7 @@ const helmet  = require('helmet');
 const cors    = require('cors');
 const morgan  = require('morgan');
 const connectDB = require('./config/db');
+console.log('→ MONGO_URI is', process.env.MONGO_URI);
 
 const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
