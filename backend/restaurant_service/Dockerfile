@@ -1,6 +1,12 @@
-FROM node:18-alpine
-WORKDIR /app
+FROM node:18-alpine AS deps
+WORKDIR /usr/src/app
 COPY package*.json ./
-RUN npm install
+RUN npm install --production
+
+FROM node:18-alpine
+WORKDIR /usr/src/app
+COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY . .
-CMD [ "npm", "start" ]
+ENV NODE_ENV=production
+EXPOSE 4000
+CMD ["node", "src/index.js"]
