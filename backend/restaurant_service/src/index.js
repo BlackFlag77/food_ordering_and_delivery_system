@@ -9,6 +9,10 @@ const errHandler = require('./errorHandler');
 const rRoutes = require('./routes/restaurantRoutes');
 const mRoutes = require('./routes/menuRoutes');
 
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '1.1.1.1']);
+
+
 const app = express();
 app.use(helmet());
 app.use(cors());
