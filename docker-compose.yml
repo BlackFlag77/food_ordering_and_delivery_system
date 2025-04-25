@@ -1,91 +1,129 @@
-# food_delivery/docker-compose.yml
-
 
 services:
-  # Database & Message Bus
-  # mongo:
-  #   image: mongo:6
-  #   container_name: mongo
-  #   ports:
-  #     - "27017:27017"
-
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-
-  # User Service
   user_service:
     build: ./backend/user_service
     container_name: user_service
     env_file: ./backend/user_service/.env
-    ports:
-      - "5000:5000"
-    depends_on:
-      # - mongo
+    ports: ["5000:5000"]
+    networks: [app-net]
 
-  # Order Service
-  order_service:
-    build: ./backend/order_service
-    container_name: order_service
-    env_file: ./backend/order_service/.env
-    ports:
-      - "5001:5001"
-    depends_on:
-      # - mongo
-      - rabbitmq
-      - user_service
-
-  # Restaurant Service (stubbed for now)
   restaurant_service:
     build: ./backend/restaurant_service
     container_name: restaurant_service
     env_file: ./backend/restaurant_service/.env
-    ports:
-      - "4000:4000"
-    depends_on:
-      # - mongo
-      - rabbitmq
+    ports: ["4000:4000"]
+    depends_on: [user_service]
+    networks: [app-net]
 
-  # # Payment Service
-  # payment_service:
-  #   build: ./backend/payment_service
-  #   container_name: payment_service
-  #   env_file: ./backend/payment_service/.env
-  #   ports:
-  #     - "5003:5003"
-  #   depends_on:
-  #     - rabbitmq
+  order_service:
+    build: ./backend/order_service
+    container_name: order_service
+    env_file: ./backend/order_service/.env
+    ports: ["4001:4001"]
+    depends_on: [user_service]
+    networks: [app-net]
 
-  # # Notification Service
-  # notification_service:
-  #   build: ./backend/notification_service
-  #   container_name: notification_service
-  #   env_file: ./backend/notification_service/.env
-  #   ports:
-  #     - "5004:5004"
-  #   depends_on:
-  #     - rabbitmq
-
-  # # Delivery Service
-  # delivery_service:
-  #   build: ./backend/delivery_service
-  #   container_name: delivery_service
-  #   env_file: ./backend/delivery_service/.env
-  #   ports:
-  #     - "5005:5005"
-  #   depends_on:
-  #     - rabbitmq
-
-  # Front‑end
   frontend:
     build: ./frontend
     container_name: frontend
     env_file: ./frontend/.env
-    ports:
-      - "3000:80"
-    depends_on:
-      - user_service
-      - order_service
+    ports: ["3000:80"]
+    depends_on: [user_service, restaurant_service, order_service]
+    networks: [app-net]
+
+networks:
+  app-net:
+    driver: bridge
+
+
+# # food_delivery/docker-compose.yml
+
+
+# services:
+#   # Database & Message Bus
+#   # mongo:
+#   #   image: mongo:6
+#   #   container_name: mongo
+#   #   ports:
+#   #     - "27017:27017"
+
+#   rabbitmq:
+#     image: rabbitmq:3-management
+#     container_name: rabbitmq
+#     ports:
+#       - "5672:5672"
+#       - "15672:15672"
+
+#   # User Service
+#   user_service:
+#     build: ./backend/user_service
+#     container_name: user_service
+#     env_file: ./backend/user_service/.env
+#     ports:
+#       - "5000:5000"
+#     depends_on:
+#       # - mongo
+
+#   # Order Service
+#   order_service:
+#     build: ./backend/order_service
+#     container_name: order_service
+#     env_file: ./backend/order_service/.env
+#     ports:
+#       - "5001:5001"
+#     depends_on:
+#       # - mongo
+#       - rabbitmq
+#       - user_service
+
+#   # Restaurant Service (stubbed for now)
+#   restaurant_service:
+#     build: ./backend/restaurant_service
+#     container_name: restaurant_service
+#     env_file: ./backend/restaurant_service/.env
+#     ports:
+#       - "4000:4000"
+#     depends_on:
+#       # - mongo
+#       - rabbitmq
+
+#   # # Payment Service
+#   # payment_service:
+#   #   build: ./backend/payment_service
+#   #   container_name: payment_service
+#   #   env_file: ./backend/payment_service/.env
+#   #   ports:
+#   #     - "5003:5003"
+#   #   depends_on:
+#   #     - rabbitmq
+
+#   # # Notification Service
+#   # notification_service:
+#   #   build: ./backend/notification_service
+#   #   container_name: notification_service
+#   #   env_file: ./backend/notification_service/.env
+#   #   ports:
+#   #     - "5004:5004"
+#   #   depends_on:
+#   #     - rabbitmq
+
+#   # # Delivery Service
+#   # delivery_service:
+#   #   build: ./backend/delivery_service
+#   #   container_name: delivery_service
+#   #   env_file: ./backend/delivery_service/.env
+#   #   ports:
+#   #     - "5005:5005"
+#   #   depends_on:
+#   #     - rabbitmq
+
+#   # Front‑end
+#   frontend:
+#     build: ./frontend
+#     container_name: frontend
+#     env_file: ./frontend/.env
+#     ports:
+#       - "3000:80"
+#     depends_on:
+#       - user_service
+#       - order_service
