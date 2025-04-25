@@ -3,11 +3,11 @@
 
 services:
   # Database & Message Bus
-  mongo:
-    image: mongo:6
-    container_name: mongo
-    ports:
-      - "27017:27017"
+  # mongo:
+  #   image: mongo:6
+  #   container_name: mongo
+  #   ports:
+  #     - "27017:27017"
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -24,7 +24,7 @@ services:
     ports:
       - "5000:5000"
     depends_on:
-      - mongo
+      # - mongo
 
   # Order Service
   order_service:
@@ -34,20 +34,20 @@ services:
     ports:
       - "5001:5001"
     depends_on:
-      - mongo
+      # - mongo
       - rabbitmq
       - user_service
 
-  # # Restaurant Service (stubbed for now)
-  # restaurant_service:
-  #   build: ./backend/restaurant_service
-  #   container_name: restaurant_service
-  #   env_file: ./backend/restaurant_service/.env
-  #   ports:
-  #     - "5002:5002"
-  #   depends_on:
-  #     - mongo
-  #     - rabbitmq
+  # Restaurant Service (stubbed for now)
+  restaurant_service:
+    build: ./backend/restaurant_service
+    container_name: restaurant_service
+    env_file: ./backend/restaurant_service/.env
+    ports:
+      - "4000:4000"
+    depends_on:
+      # - mongo
+      - rabbitmq
 
   # # Payment Service
   # payment_service:
