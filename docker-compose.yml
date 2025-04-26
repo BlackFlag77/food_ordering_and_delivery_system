@@ -19,8 +19,8 @@ services:
     build: ./backend/order_service
     container_name: order_service
     env_file: ./backend/order_service/.env
-    ports: ["4001:4001"]
-    depends_on: [user_service]
+    ports: ["5001:5001"]
+    depends_on: [user_service, restaurant_service]
     networks: [app-net]
 
   frontend:

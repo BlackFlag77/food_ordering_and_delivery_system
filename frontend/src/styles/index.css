@@ -69,3 +69,189 @@
     background: rgba(0, 0, 0, 0.4);
     z-index: 900;
   }
+
+  /* Restaurant dashboard enhancements */
+.restaurant-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+.restaurant-card h2 {
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+}
+.status-badge {
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  border-radius: 12px;
+  font-size: 0.9em;
+  font-weight: bold;
+  color: white;
+  text-transform: uppercase;
+}
+.status-badge.open {
+  background: var(--primary);
+}
+.status-badge.closed {
+  background: #999;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+.table th,
+.table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+.table th {
+  background: var(--accent);
+  color: white;
+}
+.table tbody tr:nth-child(odd) {
+  background: rgba(0,0,0,0.02);
+}
+
+.action-buttons button {
+  margin-right: 0.5rem;
+}
+
+/* Menu grid on Customer Dashboard */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.menu-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s;
+}
+.menu-card:hover {
+  transform: translateY(-4px);
+}
+.menu-card h4 {
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+}
+.menu-card p {
+  flex-grow: 1;
+}
+.menu-card .price {
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+.menu-card button {
+  background: var(--primary);
+  color: white;
+  margin-top: 0.5rem;
+}
+
+.menu-card.unavailable {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.menu-card .badge {
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+.badge.available {
+  background: #28a745;
+}
+.badge.unavailable {
+  background: #dc3545;
+}
+.menu-card button:disabled {
+  background: #999;
+  cursor: not-allowed;
+}
+/* Customer Dashboard – menu item cards with images */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.menu-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.menu-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.menu-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+.menu-card-content {
+  padding: 1rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-card-content h4 {
+  margin: 0 0 0.5rem;
+  color: var(--accent);
+}
+
+.menu-card-content p {
+  flex-grow: 1;
+  margin-bottom: 0.5rem;
+  color: #555;
+}
+
+.menu-card-content .price {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.menu-card-content .badge {
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+.badge.available { background: #28a745; }
+.badge.unavailable { background: #dc3545; }
+
+.menu-card-content button {
+  margin-top: auto;
+  padding: 0.5em;
+  background: var(--primary);
+  color: white;
+  border-radius: 4px;
+  transition: 0.2s;
+}
+.menu-card-content button:disabled {
+  background: #999;
+  cursor: not-allowed;
+}

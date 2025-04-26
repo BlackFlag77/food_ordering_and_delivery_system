@@ -30,7 +30,8 @@ exports.delete = async (req, res, next) => {
     const item = await MenuItem.findById(req.params.id);
     if (!item) return res.status(404).end();
     if (item.restaurant.toString() !== req.params.restaurantId) return res.status(403).end();
-    await item.delete();
+      // Use deleteOne() on the document
+      await item.deleteOne();
     res.status(204).end();
   } catch (err) { next(err); }
 };
