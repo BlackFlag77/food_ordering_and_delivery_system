@@ -21,17 +21,23 @@ export const AuthProvider = ({ children }) => {
     const res = await api.post('/auth/login', data);
     localStorage.setItem('token', res.data.token);
     const { user: u } = res.data;
+    console.log(" Logged in as role:", u.role);
     setUser(u);
     // redirect by role
-    switch (u.role) {
-      case 'customer': nav('/customer'); break;
-      case 'restaurant_admin': nav('/restaurant'); break;
-      case 'delivery_personnel': nav('/delivery'); break;
-      case 'admin': nav('/admin/users'); break;
-      default: nav('/');
-    }
-  };
 
+       switch (u.role) {
+           case 'customer':
+             return nav('/customer');
+           case 'restaurant_admin':
+             return nav('/restaurant');
+           case 'delivery_personnel':
+             return nav('/delivery');
+           case 'admin':
+             return nav('/admin/users');
+           default:
+             return nav('/');
+         }
+  };
   const register = async (data) => {
     await api.post('/auth/register', data);
     nav('/login');

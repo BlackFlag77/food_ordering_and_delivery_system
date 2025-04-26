@@ -31,7 +31,7 @@ export default function App() {
             <Route path="customer" element={<CustomerDashboard />} />
           </Route>
           <Route element={<ProtectedRoute roles={['restaurant_admin']} />}>
-            <Route path="restaurant" element={<RestaurantDashboard />} />
+          <Route path="/restaurant" element={<RestaurantDashboard />} />
           </Route>
           <Route element={<ProtectedRoute roles={['delivery_personnel']} />}>
             <Route path="delivery" element={<DeliveryDashboard />} />
