@@ -1,12 +1,17 @@
 import React, { useEffect, useState, useContext } from 'react';
 import restaurantApi from '../api/restaurantApi';
-import api from '../api/axios';
+import orderApi      from '../api/orderApi';       // <-- order service client
 import { AuthContext } from '../context/AuthContext';
 
 export default function CustomerDashboard() {
   const { user } = useContext(AuthContext);
   const [menuItems, setMenuItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading,  setLoading]  = useState(true);
+
+  // Ordering form state
+  const [orderingItem, setOrderingItem] = useState(null);
+  const [orderQty,     setOrderQty]     = useState(1);
+  const [submitting,   setSubmitting]   = useState(false);
 
   useEffect(() => {
     const loadMenu = async () => {
@@ -17,10 +22,9 @@ export default function CustomerDashboard() {
             restaurantApi.get(`/restaurants/${r._id}/menu`)
           )
         );
-        const items = responses.flatMap(res => res.data);
-        setMenuItems(items);
+        setMenuItems(responses.flatMap(r => r.data));
       } catch (err) {
-        console.error('Error loading menu items:', err.response || err);
+        console.error('Error loading menu items:', err);
         alert('Could not load menu items');
       } finally {
         setLoading(false);
@@ -29,18 +33,26 @@ export default function CustomerDashboard() {
     loadMenu();
   }, [user.id]);
 
-  const orderItem = async item => {
-    if (!item.isAvailable) return;
+  const openOrderForm = item => {
+    setOrderingItem(item);
+    setOrderQty(1);
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    setSubmitting(true);
     try {
-      await api.post('/orders', {
-        restaurantId: item.restaurant,
-        itemId: item._id,
-        quantity: 1
+      await orderApi.post('/orders', {
+        restaurantId: orderingItem.restaurant,
+        items: [{ menuItemId: orderingItem._id, quantity: orderQty }]
       });
-      alert(`Ordered: ${item.name}`);
+      alert(`Order placed: ${orderingItem.name} ×${orderQty}`);
+      setOrderingItem(null);
     } catch (err) {
       console.error('Order error:', err.response || err);
-      alert('Could not place order');
+      alert(err.response?.data?.message || 'Could not place order');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -72,7 +84,7 @@ export default function CustomerDashboard() {
               <p className="price">${item.price.toFixed(2)}</p>
               <button
                 disabled={!item.isAvailable}
-                onClick={() => orderItem(item)}
+                onClick={() => openOrderForm(item)}
               >
                 {item.isAvailable ? 'Order Now' : 'Unavailable'}
               </button>
@@ -81,6 +93,35 @@ export default function CustomerDashboard() {
         </div>
       ) : (
         <p>No items available right now.</p>
+      )}
+
+      {orderingItem && (
+        <>
+          <div className="backdrop" onClick={() => setOrderingItem(null)} />
+          <div className="modal">
+            <h3>Order: {orderingItem.name}</h3>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>Quantity</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={orderQty}
+                  onChange={e => setOrderQty(Math.max(1, +e.target.value))}
+                />
+              </div>
+              <p>
+                Subtotal: ${ (orderingItem.price * orderQty).toFixed(2) }
+              </p>
+              <button type="submit" disabled={submitting}>
+                {submitting ? 'Placing…' : `Place Order ($${(orderingItem.price * orderQty).toFixed(2)})`}
+              </button>{' '}
+              <button type="button" onClick={() => setOrderingItem(null)}>
+                Cancel
+              </button>
+            </form>
+          </div>
+        </>
       )}
     </div>
   );
