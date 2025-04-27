@@ -1,0 +1,18 @@
+.backend-warning {
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  color: #856404;
+  padding: 12px 15px;
+  margin: 10px 0;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.backend-warning p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.backend-warning strong {
+  font-weight: 600;
+} 
