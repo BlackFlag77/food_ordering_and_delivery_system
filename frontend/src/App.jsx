@@ -12,6 +12,8 @@ import CustomerDashboard from './pages/CustomerDashboard';
 import RestaurantDashboard from './pages/RestaurantDashboard';
 import DeliveryDashboard from './pages/DeliveryDashboard';
 import UserListPage from './pages/Admin/UserListPage';
+import CustomerOrders from './pages/CustomerOrders';
+import OrderDetail     from './pages/OrderDetail';
 
 export default function App() {
   return (
@@ -29,6 +31,8 @@ export default function App() {
           </Route>
           <Route element={<ProtectedRoute roles={['customer']} />}>
             <Route path="customer" element={<CustomerDashboard />} />
+            <Route path="orders" element={<CustomerOrders />} />
+            <Route path="orders/:id" element={<OrderDetail />} />
           </Route>
           <Route element={<ProtectedRoute roles={['restaurant_admin']} />}>
           <Route path="/restaurant" element={<RestaurantDashboard />} />
