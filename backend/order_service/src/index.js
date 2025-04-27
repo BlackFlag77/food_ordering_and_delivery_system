@@ -2,6 +2,7 @@
 require('dotenv').config();
 
 console.log('→ USER_SERVICE_URL is', process.env.USER_SERVICE_URL);
+console.log('→ RESTAURANT_SERVICE_URL is', process.env.RESTAURANT_SERVICE_URL);
 console.log('→ MONGO_URI is', process.env.MONGO_URI);
 
 const express      = require('express');

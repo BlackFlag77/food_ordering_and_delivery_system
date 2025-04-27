@@ -255,3 +255,21 @@
   background: #999;
   cursor: not-allowed;
 }
+
+.order-card {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  background: #fff;
+}
+.order-card h4 {
+  margin: 0 0 0.5rem;
+}
+.order-card a {
+  color: #007bff;
+  text-decoration: none;
+}
+.order-card a:hover {
+  text-decoration: underline;
+}
