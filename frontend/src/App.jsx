@@ -13,7 +13,9 @@ import RestaurantDashboard from './pages/RestaurantDashboard';
 import DeliveryDashboard from './pages/DeliveryDashboard';
 import UserListPage from './pages/Admin/UserListPage';
 import CustomerOrders from './pages/CustomerOrders';
-import OrderDetail     from './pages/OrderDetail';
+import OrderDetail from './pages/OrderDetail';
+import RestaurantsList from './pages/RestaurantsList';
+import RestaurantMenu from './pages/RestaurantMenu';
 
 export default function App() {
   return (
@@ -31,11 +33,13 @@ export default function App() {
           </Route>
           <Route element={<ProtectedRoute roles={['customer']} />}>
             <Route path="customer" element={<CustomerDashboard />} />
+            <Route path="customer/restaurants" element={<RestaurantsList />} />
+            <Route path="customer/restaurant/:restaurantId" element={<RestaurantMenu />} />
             <Route path="orders" element={<CustomerOrders />} />
             <Route path="orders/:id" element={<OrderDetail />} />
           </Route>
           <Route element={<ProtectedRoute roles={['restaurant_admin']} />}>
-          <Route path="/restaurant" element={<RestaurantDashboard />} />
+            <Route path="/restaurant" element={<RestaurantDashboard />} />
           </Route>
           <Route element={<ProtectedRoute roles={['delivery_personnel']} />}>
             <Route path="delivery" element={<DeliveryDashboard />} />
