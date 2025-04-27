@@ -1,14 +1,14 @@
 /* Root reset & variables */
 :root {
-    --primary: #ff6f61;
-    --accent: #4a4e69;
+    --primary: #12580a;
+    --accent: #1ee33c;
     --bg: #f2e9e4;
     --font: 'Segoe UI', sans-serif;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
     font-family: var(--font);
-    background: var(--bg) url('/background.jpg') no-repeat center/cover;
+    background: var(--bg) url('/background.jpeg') no-repeat center/cover;
     min-height: 100vh;
   }
   a { text-decoration: none; color: inherit; }
