@@ -10,7 +10,7 @@ exports.assignDriver = async (req, res) => {
     location: {
       $near: {
         $geometry: { type: "Point", coordinates: coords },
-        $maxDistance: 5000,
+        $maxDistance: 10000,
       },
     },
   });
