@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import restaurantApi from '../api/restaurantApi';
 import api from '../api/axios';
+import orderApi from '../api/orderApi';  
 import { AuthContext } from '../context/AuthContext';
 import RestaurantCoverImage from '../components/RestaurantCoverImage';
 
@@ -16,6 +17,8 @@ export default function RestaurantMenu() {
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [showOrderFormItem, setShowOrderFormItem] = useState(null);  // ← ADDED
+  const [orderFormQty, setOrderFormQty]       = useState(1);         // ← ADDED
 
   // Function to load restaurant and menu data
   const loadRestaurantAndMenu = useCallback(async () => {
@@ -117,6 +120,27 @@ export default function RestaurantMenu() {
     }
   };
 
+  const handleOrderFormSubmit = async e => {
+    e.preventDefault();
+    if (!showOrderFormItem) return;
+    try {
+      await orderApi.post('/orders', {
+        restaurantId,
+        items: [{
+          menuItemId: showOrderFormItem._id,
+          name:       showOrderFormItem.name,
+          quantity:   orderFormQty,
+          price:      showOrderFormItem.price
+        }]
+      });
+      alert('Order placed successfully!');
+      setShowOrderFormItem(null);
+    } catch (err) {
+      console.error('Order error:', err.response || err);
+      alert('Could not place order. Please try again.');
+    }
+  };
+
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
@@ -207,7 +231,7 @@ export default function RestaurantMenu() {
                     <div className="placeholder-image">🍽️</div>
                   )}
                 </div>
-                <div className="menu-item-content">
+                <div className="menu-item-content" >
                   <span className={`badge ${item.isAvailable ? 'available' : 'unavailable'}`}>
                     {item.isAvailable ? 'Available' : 'Unavailable'}
                   </span>
@@ -220,14 +244,67 @@ export default function RestaurantMenu() {
                   <button
                     className="add-to-cart-btn"
                     disabled={!item.isAvailable || !restaurant.availability}
-                    onClick={() => addToCart(item)}
+                    onClick={() => {
+                      setShowOrderFormItem(item);
+                      setOrderFormQty(1);
+                    }}
                   >
                     {!restaurant.availability 
                       ? 'Restaurant Closed' 
                       : item.isAvailable 
-                        ? 'Add to Cart' 
+                        ? 'Order Now' 
                         : 'Unavailable'}
                   </button>
+
+                  {/* ───── BEAUTIFUL ORDER FORM MODAL ───── */}
+                  {showOrderFormItem?._id === item._id && (
+                    <div className="order-modal">
+                      <form className="order-form-card" onSubmit={handleOrderFormSubmit}>
+                        <button
+                          type="button"
+                          className="close-modal-btn"
+                          onClick={() => setShowOrderFormItem(null)}
+                        >
+                      
+                        </button>
+                        <h4 className="order-form-title">Order: {item.name}</h4>
+
+                        <div className="quantity-selector">
+                          <button
+                            type="button"
+                            onClick={() => setOrderFormQty(q => Math.max(1, q - 1))}
+                          >
+                            −
+                          </button>
+                          <input
+                            type="number"
+                            min="1"
+                            value={orderFormQty}
+                            onChange={e => setOrderFormQty(Math.max(1, +e.target.value))}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setOrderFormQty(q => q + 1)}
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        <div className="order-form-actions">
+                          <button type="submit" className="btn-primary">
+                            make order
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-secondary"
+                            onClick={() => setShowOrderFormItem(null)}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
