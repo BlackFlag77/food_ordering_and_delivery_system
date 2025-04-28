@@ -7,7 +7,7 @@ async function notifyDriver(driver, orderId) {
   try {
     const res = await fetch(`http://localhost:${NOTIFICATION_SERVICE_PORT}/notify`, { // Remember to replace PORT
     // await fetch("http://localhost:PORT/notify", {
-      // Change PORT to Notification Service
+      // Change PORT to Notification Service Port
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -18,11 +18,11 @@ async function notifyDriver(driver, orderId) {
     // console.log("Notification sent! Response status:", res.status);
     if (res.ok) {
       console.log("Notification sent! Response status:", res.status);
-      const responseData = await res.json(); // Optionally parse response body
+      const responseData = await res.json();
       console.log("Notification response:", responseData);
     } else {
       console.error("Notification failed! Response status:", res.status);
-      const errorData = await res.text(); // Or res.json() if the service sends JSON errors
+      const errorData = await res.text();
       console.error("Notification error body:", errorData);
     }
   } catch (err) {

@@ -2,6 +2,7 @@ const Delivery = require("../models/Delivery");
 const Driver = require("../models/Driver");
 const { validateTransition } = require("../utils/statusMachine");
 
+// Get delivery status
 exports.getStatus = async (req, res) => {
   const { orderId } = req.params;
   const delivery = await Delivery.findOne({ orderId }).populate("driver");
@@ -14,6 +15,7 @@ exports.getStatus = async (req, res) => {
   });
 };
 
+// Update delivery status
 exports.updateStatus = async (req, res) => {
   const { orderId } = req.params;
   const { status } = req.body;
@@ -59,24 +61,25 @@ exports.updateStatus = async (req, res) => {
   res.json({ message: "Status updated", delivery });
 };
 
+// Update driver location
 exports.updateLocation = async (req, res) => {
   const { driverId } = req.params;
   const { coords } = req.body; // [longitude, latitude]
 
-  // 1. Update driver location
+  // Update driver location
   const driver = await Driver.findByIdAndUpdate(
     driverId,
     { location: { type: "Point", coordinates: coords } },
     { new: true }
   );
 
-  // 2. Find all deliveries for this driver
+  // Find all deliveries for this driver
   const deliveries = await Delivery.find({
     driver: driverId,
     status: "en_route",
   });
 
-  // 3. Broadcast to all connected clients
+  // Broadcast to all connected clients
   deliveries.forEach((delivery) => {
     const connections =
       activeConnections.get(delivery.orderId.toString()) || [];
@@ -99,6 +102,7 @@ exports.updateLocation = async (req, res) => {
   res.json({ message: "Location updated", driver });
 };
 
+// Get driver location (Ping)
 exports.driverPing = async (req, res) => {
   const { driverId } = req.params;
   const { coords } = req.body;

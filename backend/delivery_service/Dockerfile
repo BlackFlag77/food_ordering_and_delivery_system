@@ -1,6 +1,5 @@
-# Use official Node.js LTS image
+# Ensures consistent Node version across environments
 FROM node:18-alpine AS deps
-# ensures consistent Node version
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -8,13 +7,13 @@ WORKDIR /usr/src/app
 # Install dependencies
 COPY package*.json ./
 
-# Install application dependencies
-# RUN npm install --production
-# install only prod deps
+# Install application dependencies (only prod deps)
 RUN npm ci --only=production
+# RUN npm install --production  # all dependencies
 
 FROM node:18-alpine
 WORKDIR /usr/src/app
+
 # Bundle app source (rest of the application code)
 COPY . .
 
@@ -24,5 +23,3 @@ EXPOSE 5503
 
 # Default command (command to run the application)
 CMD [ "npm", "start" ]
-# matches package.json start script
-# CMD ["node","src/index.js"]
