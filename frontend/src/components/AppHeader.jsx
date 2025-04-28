@@ -36,6 +36,7 @@ const AppHeader = () => {
   const isRegisterPage = location.pathname === '/register';
   const isCustomerOrdersPage = location.pathname === '/customer/orders';
   const isCustomerRestaurantsPage = location.pathname === '/customer/restaurants';
+  const isAdminRetaurantspage =location.pathname ==='/restaurant';
 
   return (
     <header className="app-header">
@@ -58,7 +59,7 @@ const AppHeader = () => {
                   Home
                 </Link>
               )}
-          {!isHomePage && !isLoginPage && !isRegisterPage && (
+          {!isHomePage && !isLoginPage && !isRegisterPage && !isAdminRetaurantspage &&(
             <>
               
               <Link 
