@@ -10,6 +10,7 @@ import CreateMenuItemModal from '../components/CreateMenuItemModal';
 import EditMenuItemModal from '../components/EditMenuItemModal';
 import RestaurantSettings from '../components/RestaurantSettings';
 import RestaurantCoverImage from '../components/RestaurantCoverImage';
+import RestaurantLogo from '../components/RestaurantLogo';
 import { useNavigate } from 'react-router-dom';
 
 export default function RestaurantDashboard() {
@@ -373,7 +374,14 @@ export default function RestaurantDashboard() {
       {/* Restaurant Header */}
       <div className="restaurant-header">
         <div className="restaurant-info">
-          <h1>{restaurant.name}</h1>
+          <div className="restaurant-title">
+            <RestaurantLogo 
+              logoUrl={restaurant.logoUrl}
+              restaurantName={restaurant.name}
+              size="60px"
+            />
+            <h1>{restaurant.name}</h1>
+          </div>
           <p>{restaurant.description}</p>
           <span className="cuisine-badge">{restaurant.cuisine}</span>
         </div>
