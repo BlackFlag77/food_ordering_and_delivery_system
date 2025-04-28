@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 // const { authenticate } = require('../middleware/auth');
-const { assignDriver } = require("../controllers/AssignController");
+const { assignDriver, createDriver } = require("../controllers/AssignController");
 const {
   getStatus,
   updateStatus,
@@ -24,6 +24,8 @@ const {
 
 // Only allow restaurent admins to assign drivers
 router.post("/assign", assignDriver);
+router.post("/drivers", createDriver);
+// router.post("/assign", createDelivery);
 
 router.get("/status/:orderId", getStatus);
 

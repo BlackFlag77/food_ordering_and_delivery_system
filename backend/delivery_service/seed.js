@@ -9,10 +9,10 @@ const Delivery = require("./src/models/Delivery");
 //   const factor = Math.pow(10, decimalPlaces);
 //   return Math.floor(Math.random() * (max - min + 1) + min) / factor;
 // }
-// function getRandomFloat(min, max, precision = 6) {
-//   const random = Math.random() * (max - min) + min;
-//   return parseFloat(random.toFixed(precision));
-// }
+function getRandomFloat(min, max, precision = 6) {
+  const random = Math.random() * (max - min) + min;
+  return parseFloat(random.toFixed(precision));
+}
 
 async function seed() {
   // Connect to MongoDB
@@ -41,11 +41,11 @@ async function seed() {
     // phone: faker.phone.phoneNumber(),
     location: {
       type: "Point",
-      coordinates: [
-        faker.location.longitude(79.88, 80.85, 6),
-        faker.location.latitude(6.6, 8.0, 6),
-      ],
-      //   coordinates: [getRandomFloat(79.8, 81.9), getRandomFloat(6.6, 9.8)],
+      //   coordinates: [
+      //     faker.location.longitude(79.88, 80.85, 6),
+      //     faker.location.latitude(6.6, 8.0, 6),
+      //   ],
+      coordinates: [getRandomFloat(79.8, 81.9), getRandomFloat(6.6, 9.8)],
       //   coordinates: [faker.location.longitude(), faker.location.latitude()],
       //   coordinates: [faker.address.longitude(), faker.address.latitude()],
       //   coordinates: [
@@ -59,6 +59,7 @@ async function seed() {
 
   // Insert drivers into the database
   const createdDrivers = await Driver.insertMany(drivers);
+  console.log(`${createdDrivers.length} drivers seeded.`);
 
   // Create fake deliveries
   //   const deliveries = Array.from({ length: 20 }).map(() => ({
@@ -67,12 +68,21 @@ async function seed() {
     // driverId: faker.random.arrayElement(drivers)._id,
     driver: d._id,
     status: "assigned",
+    deliveryLocation: {
+      type: "Point",
+      coordinates: [getRandomFloat(79.8, 81.9), getRandomFloat(6.6, 9.8)], // Random restaurant location
+    },
+    pickupLocation: {
+      type: "Point",
+      coordinates: [getRandomFloat(79.8, 81.9), getRandomFloat(6.6, 9.8)], // Random customer location
+    },
     createdAt: faker.date.past(),
   }));
 
   // Insert deliveries into the database
   await Delivery.insertMany(deliveries);
 
+  console.log(`${deliveries.length} deliveries seeded.`);
   console.log("Database seeded successfully!");
 
   // Close the connection

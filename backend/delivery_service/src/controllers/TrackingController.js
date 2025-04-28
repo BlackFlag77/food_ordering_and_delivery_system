@@ -1,5 +1,6 @@
 const Delivery = require("../models/Delivery");
 const Driver = require("../models/Driver");
+const { validateTransition } = require("../utils/statusMachine");
 
 exports.getStatus = async (req, res) => {
   const { orderId } = req.params;
@@ -17,23 +18,43 @@ exports.updateStatus = async (req, res) => {
   const { orderId } = req.params;
   const { status } = req.body;
 
-  const delivery = await Delivery.findOneAndUpdate(
-    { orderId },
-    { status, updatedAt: Date.now() },
-    { new: true }
-  ).populate("driver");
+  // Fetch the existing delivery document to get the current status
+  const delivery = await Delivery.findOne({ orderId }).populate("driver");
 
-  if (!delivery) return res.status(404).json({ error: "Delivery not found" });
+  if (!delivery) {
+    return res.status(404).json({ error: "Delivery not found" });
+  }
 
   // Validate status transition
   if (!validateTransition(delivery.status, status)) {
     return res.status(400).json({ error: "Invalid status transition" });
   }
 
+  const updatedDelivery = await Delivery.findOneAndUpdate(
+    { orderId },
+    { status, updatedAt: Date.now() },
+    { new: true }
+  ).populate("driver");
+
+  if (!updatedDelivery) {
+    return res.status(500).json({ error: "Failed to update delivery status" });
+  }
+
   // Reset driver availability when delivery is completed
   if (status === "delivered") {
     await Driver.findByIdAndUpdate(delivery.driver._id, { available: true });
   }
+
+  // After updating status
+  const connections = activeConnections.get(orderId.toString()) || [];
+  connections.forEach((ws) => {
+    ws.send(
+      JSON.stringify({
+        type: "STATUS_UPDATE",
+        status: status,
+      })
+    );
+  });
 
   res.json({ message: "Status updated", delivery });
 };
@@ -63,11 +84,13 @@ exports.updateLocation = async (req, res) => {
       ws.send(
         JSON.stringify({
           type: "LOCATION_UPDATE",
-          data: {
-            coordinates: coords,
-            driverId,
-            timestamp: Date.now(),
-          },
+          coordinates: driver.location.coordinates,
+          status: delivery.status,
+          // data: {
+          //   coordinates: coords,
+          //   driverId,
+          //   timestamp: Date.now(),
+          // },
         })
       );
     });
