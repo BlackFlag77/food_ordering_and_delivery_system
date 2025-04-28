@@ -17,7 +17,31 @@ export default function RestaurantsList() {
     try {
       setLoading(true);
       const { data } = await restaurantApi.get('/restaurants');
-      setRestaurants(data);
+      
+      // Process the restaurants data to include any local storage updates
+      const processedRestaurants = data.map(restaurant => {
+        // Check if we have updated data in local storage
+        const localRestaurantKey = `restaurant_${restaurant._id}`;
+        const localRestaurantData = localStorage.getItem(localRestaurantKey);
+        
+        if (localRestaurantData) {
+          try {
+            const localData = JSON.parse(localRestaurantData);
+            // Merge the local data with the API data, prioritizing local data for image URLs
+            return {
+              ...restaurant,
+              logoUrl: localData.logoUrl || restaurant.logoUrl,
+              coverImageUrl: localData.coverImageUrl || restaurant.coverImageUrl
+            };
+          } catch (e) {
+            console.error('Error parsing local restaurant data:', e);
+          }
+        }
+        
+        return restaurant;
+      });
+      
+      setRestaurants(processedRestaurants);
       setError(null);
       setLastUpdated(new Date());
     } catch (err) {

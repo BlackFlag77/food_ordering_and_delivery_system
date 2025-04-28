@@ -5,6 +5,7 @@ import api from '../api/axios';
 import orderApi from '../api/orderApi';  
 import { AuthContext } from '../context/AuthContext';
 import RestaurantCoverImage from '../components/RestaurantCoverImage';
+import RestaurantLogo from '../components/RestaurantLogo';
 
 export default function RestaurantMenu() {
   const { restaurantId } = useParams();
@@ -26,7 +27,28 @@ export default function RestaurantMenu() {
       setLoading(true);
       // Load restaurant details
       const { data: restaurantData } = await restaurantApi.get(`/restaurants/${restaurantId}`);
-      setRestaurant(restaurantData);
+      
+      // Check if we have updated data in local storage
+      const localRestaurantKey = `restaurant_${restaurantId}`;
+      const localRestaurantData = localStorage.getItem(localRestaurantKey);
+      
+      let processedRestaurantData = restaurantData;
+      
+      if (localRestaurantData) {
+        try {
+          const localData = JSON.parse(localRestaurantData);
+          // Merge the local data with the API data, prioritizing local data for image URLs
+          processedRestaurantData = {
+            ...restaurantData,
+            logoUrl: localData.logoUrl || restaurantData.logoUrl,
+            coverImageUrl: localData.coverImageUrl || restaurantData.coverImageUrl
+          };
+        } catch (e) {
+          console.error('Error parsing local restaurant data:', e);
+        }
+      }
+      
+      setRestaurant(processedRestaurantData);
       
       // Load menu items
       const { data: menuData } = await restaurantApi.get(`/restaurants/${restaurantId}/menu`);
@@ -181,13 +203,10 @@ export default function RestaurantMenu() {
             restaurantName={restaurant.name}
           />
           <div className="restaurant-profile">
-            <div className="restaurant-logo">
-              {restaurant.logoUrl ? (
-                <img src={restaurant.logoUrl} alt={`${restaurant.name} logo`} />
-              ) : (
-                <div className="placeholder-logo">🍽️</div>
-              )}
-            </div>
+            <RestaurantLogo 
+              logoUrl={restaurant.logoUrl}
+              restaurantName={restaurant.name}
+            />
             <div className="restaurant-details">
               <h2>{restaurant.name}</h2>
               <p>{restaurant.description}</p>

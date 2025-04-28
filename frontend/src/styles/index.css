@@ -77,7 +77,7 @@ input, select {
   padding: 2em;
   z-index: 1000;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .backdrop {
@@ -2084,7 +2084,20 @@ input:checked + .toggle-slider:before {
   height: 100%;
   margin-bottom: 0;
   border-radius: 8px 8px 0 0;
-}.add-to-cart-btn {
+}
+
+.restaurant-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.restaurant-title h1 {
+  margin: 0;
+}
+
+.add-to-cart-btn {
   /* your existing rules… */
   display: inline-flex;
   align-items: center;
@@ -2139,7 +2152,7 @@ input:checked + .toggle-slider:before {
   gap: 1rem;
 }
 
-/* ─── Close “×” Button ─── */
+/* ─── Close "×" Button ─── */
 .close-modal-btn {
   position: absolute;
   top: 0.5rem; right: 0.5rem;
@@ -2208,7 +2221,7 @@ input:checked + .toggle-slider:before {
   font-weight: 600;
 }
 
-/* ─── Make sure the “add-to-cart-btn” still has its own bg fallback ─── */
+/* ─── Make sure the "add-to-cart-btn" still has its own bg fallback ─── */
 .add-to-cart-btn {
   background-color: #ff6f61;
   color: white;
