@@ -102,7 +102,7 @@ export default function RestaurantDashboard() {
             console.error('Error loading menu items:', error);
             // Set empty menu items instead of showing an error
             setMenuItems([]);
-          }
+        }
           
           try {
             const statsResponse = await restaurantApi.get(`/restaurants/${restaurantData._id}/stats`);
@@ -312,9 +312,9 @@ export default function RestaurantDashboard() {
     return (
       <div className="restaurant-dashboard">
         <div className="create-restaurant-card">
-          <h2>Create Your Restaurant</h2>
+        <h2>Create Your Restaurant</h2>
           <form onSubmit={(e) => {
-            e.preventDefault();
+          e.preventDefault();
             const formData = new FormData(e.target);
             handleCreateRestaurant({
               name: formData.get('name'),
@@ -322,8 +322,8 @@ export default function RestaurantDashboard() {
               cuisine: formData.get('cuisine'),
               address: formData.get('address')
             });
-          }}>
-            <div className="form-group">
+        }}>
+          <div className="form-group">
               <label htmlFor="name">Restaurant Name</label>
               <input
                 type="text"
@@ -351,8 +351,8 @@ export default function RestaurantDashboard() {
                 required
                 placeholder="e.g., Italian, Indian, Chinese"
               />
-            </div>
-            <div className="form-group">
+          </div>
+          <div className="form-group">
               <label htmlFor="address">Address</label>
               <input
                 type="text"
@@ -361,9 +361,9 @@ export default function RestaurantDashboard() {
                 required
                 placeholder="Enter restaurant address"
               />
-            </div>
+          </div>
             <button type="submit" className="submit-btn">Create Restaurant</button>
-          </form>
+        </form>
         </div>
       </div>
     );
@@ -474,9 +474,9 @@ export default function RestaurantDashboard() {
         </button>
       </div>
 
-      {menuItems.length > 0 ? (
+        {menuItems.length > 0 ? (
         <div className="menu-grid">
-          {menuItems.map(item => (
+              {menuItems.map(item => (
             <div key={item._id} className="menu-item-card">
               <div className="menu-item-image">
                 {item.imageUrl ? (
@@ -614,7 +614,7 @@ export default function RestaurantDashboard() {
                 </div>
               </div>
             </div>
-          ))}
+              ))}
         </div>
       ) : (
         <div className="empty-orders">

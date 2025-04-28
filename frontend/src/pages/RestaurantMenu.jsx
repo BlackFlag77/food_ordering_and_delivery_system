@@ -135,7 +135,7 @@ export default function RestaurantMenu() {
       alert('Order placed successfully!');
       
       // Navigate to orders page
-      navigate('/orders');
+      navigate('/customer/orders');
     } catch (err) {
       console.error('Order error:', err.response || err);
       alert('Could not place order. Please try again.');

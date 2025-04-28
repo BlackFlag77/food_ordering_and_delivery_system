@@ -1,10 +1,18 @@
 // src/context/AuthContext.jsx
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import api from '../api/axios';
 import jwtDecode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
 
 export const AuthProvider = ({ children }) => {
   const nav = useNavigate();
@@ -46,7 +54,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
-    nav('/');
+    // Remove the automatic navigation
   };
 
   return (

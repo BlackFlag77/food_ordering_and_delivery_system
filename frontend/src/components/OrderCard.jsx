@@ -9,7 +9,7 @@ export default function OrderCard({ order }) {
       <p><strong>Status:</strong> {order.status}</p>
       <p><strong>Total:</strong> ${order.total.toFixed(2)}</p>
       <p><strong>Placed:</strong> {new Date(order.createdAt).toLocaleString()}</p>
-      <Link to={`/orders/${order._id}`}>View Details</Link>
+      <Link to={`/customer/orders/${order._id}`}>View Details</Link>
     </div>
   );
 }
