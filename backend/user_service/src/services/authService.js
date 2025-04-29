@@ -1,12 +1,12 @@
 const User   = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt    = require('jsonwebtoken');
-
+const stripe    = require('stripe')(process.env.STRIPE_SECRET);
 /**
  * Registers a new user, returns { token }
  * Throws 400 if email in use.
  */
-exports.register = async ({ name, email, password, role }) => {
+exports.register = async ({ name, email, password, role,phoneNumber  }) => {
   if (await User.findOne({ email })) {
     const err = new Error('Email already in use');
     err.statusCode = 400;
@@ -14,12 +14,16 @@ exports.register = async ({ name, email, password, role }) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 12);
+  const customer = await stripe.customers.create({
+    name,
+    email
+  });
   const newUser = await new User({
-    name, email, password: hashedPassword, role
+    name, email, password: hashedPassword,stripeCustomerId: customer.id, role,phoneNumber        
   }).save();
 
   const token = jwt.sign(
-    { user: { id: newUser.id, role: newUser.role } },
+    { user: { id: newUser.id, role: newUser.role,phoneNumber:  newUser.phoneNumber } },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
@@ -60,7 +64,7 @@ exports.login = async ({ nameOrEmail, password }) => {
   return {
     message: 'Login successful',
     token,
-    user: { id: existingUser.id, role: existingUser.role }
+    user: { id: existingUser.id, role: existingUser.role,phoneNumber:  existingUser.phoneNumber }
   };
 };
 

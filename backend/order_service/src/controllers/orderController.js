@@ -7,10 +7,13 @@ exports.createOrder = async (req, res, next) => {
     const { restaurantId, items: requestedItems } = req.body;
 
     // 1) Fetch the restaurant's menu
+    
     const menuResp = await axios.get(
       `${process.env.RESTAURANT_SERVICE_URL}/restaurants/${restaurantId}/menu`,
       { headers: { Authorization: req.headers.authorization } }
     );
+
+    
     const menuItems = menuResp.data;  // array of MenuItem objects
 
     // 2) Validate & build the order items list
@@ -32,12 +35,18 @@ exports.createOrder = async (req, res, next) => {
 
     // 3) Compute total
     const total = validatedItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    const { data: user } = await axios.get(
+      `${process.env.USER_SERVICE_URL}/users/${req.user.id}`,
+      { headers :{ Authorization: req.headers.authorization }}
+    );
 
+    console.log(user)
     // 4) Persist the order
     const order = await Order.create({
       customerId:   req.user.id,
       restaurantId,
       items:        validatedItems,
+      stripeCustomerId: user.stripeCustomerId,
       total
     });
 
@@ -104,7 +113,7 @@ exports.patchStatus = async (req, res, next) => {
     const adminStatuses = ['CONFIRMED','PREPARING','READY'];
     const deliveryStatuses = ['PICKED_UP','DELIVERED'];
 
-    if (adminStatuses.includes(s) && req.user.role !== 'restaurant_admin')
+    if (adminStatuses.includes(s) && !['restaurant_admin','customer'].includes(req.user.role))
       return res.status(403).end();
     if (deliveryStatuses.includes(s) && req.user.role !== 'delivery_personnel')
       return res.status(403).end();

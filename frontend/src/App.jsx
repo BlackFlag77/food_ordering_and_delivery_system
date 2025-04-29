@@ -3,6 +3,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import AppHeader from './components/AppHeader';
 import ProtectedRoute from './components/ProtectedRoute';
+// import React from 'react';
+import Checkout from './pages/Checkout';
+import Payments from './pages/Payment';
 
 import LandingPage from './pages/LandingPage';
 import RegisterPage from './pages/RegisterPage';
@@ -12,6 +15,7 @@ import CustomerDashboard from './pages/CustomerDashboard';
 import RestaurantDashboard from './pages/RestaurantDashboard';
 import DeliveryDashboard from './pages/DeliveryDashboard';
 import UserListPage from './pages/Admin/UserListPage';
+
 
 export default function App() {
   return (
@@ -27,6 +31,7 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="profile" element={<ProfilePage />} />
           </Route>
+        
           <Route element={<ProtectedRoute roles={['customer']} />}>
             <Route path="customer" element={<CustomerDashboard />} />
           </Route>
@@ -35,6 +40,12 @@ export default function App() {
           </Route>
           <Route element={<ProtectedRoute roles={['delivery_personnel']} />}>
             <Route path="delivery" element={<DeliveryDashboard />} />
+          </Route>
+          <Route element={<ProtectedRoute />}>
+          <Route path="checkout/:orderId" element={<Checkout />} />
+          </Route>
+          <Route element={<ProtectedRoute />}>
+          <Route path="/payments" element={<Payments />} />
           </Route>
           <Route element={<ProtectedRoute roles={['admin']} />}>
             <Route path="admin/users" element={<UserListPage />} />

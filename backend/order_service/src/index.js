@@ -1,5 +1,8 @@
 // src/index.js
 require('dotenv').config();
+console.log('📂 CWD =', process.cwd());
+console.log('🛡️  JWT_SECRET =', process.env.JWT_SECRET);
+console.log('order-service JWT_SECRET is:', process.env.JWT_SECRET);
 
 console.log('→ USER_SERVICE_URL is', process.env.USER_SERVICE_URL);
 console.log('→ MONGO_URI is', process.env.MONGO_URI);
