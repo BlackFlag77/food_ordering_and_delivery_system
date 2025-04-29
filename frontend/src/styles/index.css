@@ -1115,6 +1115,11 @@ input:checked + .toggle-slider:before {
   color: var(--dark);
 }
 
+.status-confirmed {
+  background: var(--info);
+  color: var(--white);
+}
+
 .status-preparing {
   background: var(--info);
   color: var(--white);
@@ -1122,6 +1127,11 @@ input:checked + .toggle-slider:before {
 
 .status-ready {
   background: var(--success);
+  color: var(--white);
+}
+
+.status-picked_up {
+  background: var(--primary);
   color: var(--white);
 }
 
@@ -2645,6 +2655,21 @@ input:checked + .toggle-slider:before {
     flex-direction: column;
     gap: 1rem;
   }
+}
+
+.customer-info {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--gray);
+}
+
+.customer-name {
+  font-weight: 500;
+  margin-right: 0.5rem;
+}
+
+.customer-email {
+  color: var(--gray-dark);
 }
 
 

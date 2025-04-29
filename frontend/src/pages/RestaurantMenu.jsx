@@ -120,13 +120,16 @@ export default function RestaurantMenu() {
     try {
       // Create an order with multiple items
       const orderItems = cart.map(item => ({
-        itemId: item._id,
-        quantity: item.quantity
+        menuItemId: item._id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price
       }));
       
-      await api.post('/orders', {
+      await orderApi.post('/orders', {
         restaurantId,
-        items: orderItems
+        items: orderItems,
+        total: calculateTotal()
       });
       
       // Clear cart and show success message

@@ -46,6 +46,56 @@
   margin-top: 2rem;
 }
 
+.order-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.order-card h4 {
+  margin: 0 0 1rem 0;
+  color: var(--primary);
+}
+
+.order-card p {
+  margin: 0.5rem 0;
+}
+
+.order-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.order-actions a {
+  color: var(--primary);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.order-actions a:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+}
+
 .no-orders {
   text-align: center;
   padding: 3rem;

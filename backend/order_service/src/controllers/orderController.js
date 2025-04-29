@@ -66,14 +66,30 @@ exports.getOrder = async (req, res, next) => {
 exports.listOrders = async (req, res, next) => {
   try {
     const filter = {};
+    
+    // For customers, only show their own orders
     if (req.user.role === 'customer') {
       filter.customerId = req.user.id;
-    } else if (req.user.role === 'restaurant_admin' && req.query.restaurantId) {
-      filter.restaurantId = req.query.restaurantId;
+    } 
+    // For restaurant admins, show all orders for their restaurant
+    else if (req.user.role === 'restaurant_admin') {
+      // Get the restaurant ID from the query parameter
+      const restaurantId = req.query.restaurantId;
+      if (!restaurantId) {
+        return res.status(400).json({ error: 'Restaurant ID is required' });
+      }
+      filter.restaurantId = restaurantId;
     }
-    const orders = await Order.find(filter).sort('-createdAt');
+    
+    // Get orders sorted by creation date (newest first)
+    const orders = await Order.find(filter)
+      .sort('-createdAt')
+      .populate('customerId', 'name email'); // Populate customer details
+    
     res.json(orders);
-  } catch (err) { next(err); }
+  } catch (err) { 
+    next(err); 
+  }
 };
 
 exports.updateOrder = async (req, res, next) => {
