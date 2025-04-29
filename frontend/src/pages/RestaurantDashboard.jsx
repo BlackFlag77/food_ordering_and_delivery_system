@@ -5,6 +5,7 @@ import React, {
   useCallback
 } from 'react';
 import restaurantApi from '../api/restaurantApi';
+import orderApi from '../api/orderApi';
 import { AuthContext } from '../context/AuthContext';
 import CreateMenuItemModal from '../components/CreateMenuItemModal';
 import EditMenuItemModal from '../components/EditMenuItemModal';
@@ -12,6 +13,7 @@ import RestaurantSettings from '../components/RestaurantSettings';
 import RestaurantCoverImage from '../components/RestaurantCoverImage';
 import RestaurantLogo from '../components/RestaurantLogo';
 import { useNavigate } from 'react-router-dom';
+import './RestaurantDashboard.css';
 
 export default function RestaurantDashboard() {
   const { user } = useContext(AuthContext);
@@ -36,7 +38,7 @@ export default function RestaurantDashboard() {
 
   const refreshOrders = async () => {
     try {
-      const { data } = await restaurantApi.get(`/restaurants/${restaurant._id}/orders`);
+      const data = await restaurantApi.getOrders(restaurant._id);
       setOrders(data);
       // Check if we're using mock data (data will have updatedAt if it's mock data)
       setIsUsingMockData(data.some(order => order.updatedAt));
@@ -126,8 +128,8 @@ export default function RestaurantDashboard() {
           }
           
           try {
-            const ordersResponse = await restaurantApi.get(`/restaurants/${restaurantData._id}/orders`);
-            setOrders(ordersResponse.data || []);
+            const ordersResponse = await restaurantApi.getOrders(restaurantData._id);
+            setOrders(ordersResponse || []);
           } catch (error) {
             console.error('Error loading orders:', error);
             // Set empty orders instead of showing an error
@@ -218,17 +220,41 @@ export default function RestaurantDashboard() {
     }
   };
 
-  const handleUpdateOrderStatus = async (orderId, newStatus) => {
+  const handleOrderAction = async (orderId, action) => {
     try {
-      const { data: updatedOrder } = await restaurantApi.patch(
-        `/restaurants/${restaurant._id}/orders/${orderId}`,
-        { status: newStatus }
+      let newStatus;
+      switch (action) {
+        case 'confirm':
+          newStatus = 'CONFIRMED';
+          break;
+        case 'prepare':
+          newStatus = 'PREPARING';
+          break;
+        case 'ready':
+          newStatus = 'READY';
+          break;
+        case 'cancel':
+          newStatus = 'CANCELLED';
+          break;
+        default:
+          return;
+      }
+
+      // Update the order status using the order service API
+      const response = await orderApi.patch(`/orders/${orderId}/status`, { status: newStatus });
+      
+      // Update the orders list with the new status
+      setOrders(prevOrders => 
+        prevOrders.map(order => 
+          order._id === orderId ? response.data : order
+        )
       );
-      setOrders(prev => prev.map(order => 
-        order._id === updatedOrder._id ? updatedOrder : order
-      ));
+
+      // Show success message
+      alert(`Order ${orderId.slice(-6)} has been ${newStatus.toLowerCase()}`);
     } catch (error) {
       console.error('Error updating order status:', error);
+      alert('Failed to update order status. Please try again.');
     }
   };
 
@@ -287,11 +313,11 @@ export default function RestaurantDashboard() {
     
     try {
       // Refresh orders - handle 404 gracefully
-      const ordersResponse = await restaurantApi.get(`/restaurants/${updatedRestaurant._id}/orders`);
-      setOrders(ordersResponse.data);
+      const ordersResponse = await restaurantApi.getOrders(updatedRestaurant._id);
+      setOrders(ordersResponse || []);
       
       // Check if we're using mock data
-      if (ordersResponse.data && ordersResponse.data.length > 0 && ordersResponse.data[0]._id === '1') {
+      if (ordersResponse && ordersResponse.length > 0 && ordersResponse[0]._id === '1') {
         console.log('Using mock orders data (backend unavailable)');
       }
     } catch (error) {
@@ -534,24 +560,24 @@ export default function RestaurantDashboard() {
         <div className="order-filters">
           <select 
             className="filter-select"
-            onChange={(e) => {
-              // Filter orders by status
-              // This would be implemented with state in a real app
-            }}
+            value={orderFilter}
+            onChange={(e) => setOrderFilter(e.target.value)}
           >
             <option value="all">All Orders</option>
-            <option value="pending">Pending</option>
-            <option value="preparing">Preparing</option>
-            <option value="ready">Ready</option>
-            <option value="delivered">Delivered</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="PENDING">Pending</option>
+            <option value="CONFIRMED">Confirmed</option>
+            <option value="PREPARING">Preparing</option>
+            <option value="READY">Ready</option>
+            <option value="PICKED_UP">Picked Up</option>
+            <option value="DELIVERED">Delivered</option>
+            <option value="CANCELLED">Cancelled</option>
           </select>
         </div>
       </div>
 
-      {orders.length > 0 ? (
+      {filteredOrders.length > 0 ? (
         <div className="orders-list">
-          {orders.map(order => (
+          {filteredOrders.map(order => (
             <div key={order._id} className="order-card">
               <div className="order-header">
                 <div className="order-info">
@@ -559,8 +585,14 @@ export default function RestaurantDashboard() {
                   <span className="order-date">
                     {new Date(order.createdAt).toLocaleString()}
                   </span>
+                  {order.customerId && (
+                    <div className="customer-info">
+                      <span className="customer-name">{order.customerId.name}</span>
+                      <span className="customer-email">{order.customerId.email}</span>
+                    </div>
+                  )}
                 </div>
-                <div className={`order-status status-${order.status}`}>
+                <div className={`order-status status-${order.status.toLowerCase()}`}>
                   {order.status}
                 </div>
               </div>
@@ -579,42 +611,78 @@ export default function RestaurantDashboard() {
                   <span className="total-amount">${order.total.toFixed(2)}</span>
                 </div>
                 <div className="order-actions">
-                  {order.status === 'pending' && (
-                    <button 
-                      className="action-btn prepare-btn"
-                      onClick={() => updateOrderStatus(order._id, 'preparing')}
-                    >
-                      Start Preparing
-                    </button>
+                  {order.status === 'PENDING' && (
+                    <>
+                      <button 
+                        className="action-btn confirm-btn"
+                        onClick={() => handleOrderAction(order._id, 'confirm')}
+                      >
+                        Confirm
+                      </button>
+                      <button 
+                        className="action-btn cancel-btn"
+                        onClick={() => handleOrderAction(order._id, 'cancel')}
+                      >
+                        Cancel
+                      </button>
+                    </>
                   )}
-                  {order.status === 'preparing' && (
-                    <button 
-                      className="action-btn ready-btn"
-                      onClick={() => updateOrderStatus(order._id, 'ready')}
-                    >
-                      Mark Ready
-                    </button>
+                  {order.status === 'CONFIRMED' && (
+                    <>
+                      <button 
+                        className="action-btn prepare-btn"
+                        onClick={() => handleOrderAction(order._id, 'prepare')}
+                      >
+                        Prepare
+                      </button>
+                      <button 
+                        className="action-btn cancel-btn"
+                        onClick={() => handleOrderAction(order._id, 'cancel')}
+                      >
+                        Cancel
+                      </button>
+                    </>
                   )}
-                  {order.status === 'ready' && (
-                    <button 
-                      className="action-btn delivered-btn"
-                      onClick={() => updateOrderStatus(order._id, 'delivered')}
-                    >
-                      Mark Delivered
-                    </button>
+                  {order.status === 'PREPARING' && (
+                    <>
+                      <button 
+                        className="action-btn ready-btn"
+                        onClick={() => handleOrderAction(order._id, 'ready')}
+                      >
+                        Ready
+                      </button>
+                      <button 
+                        className="action-btn cancel-btn"
+                        onClick={() => handleOrderAction(order._id, 'cancel')}
+                      >
+                        Cancel
+                      </button>
+                    </>
                   )}
-                  {(order.status === 'pending' || order.status === 'preparing') && (
-                    <button 
-                      className="action-btn cancel-btn"
-                      onClick={() => updateOrderStatus(order._id, 'cancelled')}
-                    >
-                      Cancel Order
-                    </button>
+                  {order.status === 'READY' && (
+                    <div className="ready-status">
+                      <span className="ready-badge">Ready for Pickup</span>
+                    </div>
+                  )}
+                  {order.status === 'PICKED_UP' && (
+                    <div className="picked-up-status">
+                      <span className="picked-up-badge">Order Picked Up</span>
+                    </div>
+                  )}
+                  {order.status === 'DELIVERED' && (
+                    <div className="delivered-status">
+                      <span className="delivered-badge">Order Delivered</span>
+                    </div>
+                  )}
+                  {order.status === 'CANCELLED' && (
+                    <div className="cancelled-status">
+                      <span className="cancelled-badge">Order Cancelled</span>
+                    </div>
                   )}
                 </div>
               </div>
             </div>
-              ))}
+          ))}
         </div>
       ) : (
         <div className="empty-orders">
