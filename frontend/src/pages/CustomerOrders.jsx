@@ -29,6 +29,10 @@ export default function CustomerOrders() {
     fetchOrders();
   }, []);
 
+  const handleDeleteOrder = (orderId) => {
+    setOrders(orders.filter(order => order._id !== orderId));
+  };
+
   if (loading) {
     return (
       <div className="container">
@@ -55,7 +59,7 @@ export default function CustomerOrders() {
       {orders.length > 0 ? (
         <div className="orders-list">
           {orders.map(order => (
-            <OrderCard key={order._id} order={order} />
+            <OrderCard key={order._id} order={order} onDelete={handleDeleteOrder} />
           ))}
         </div>
       ) : (
