@@ -11,4 +11,84 @@
 .mock-data-banner p {
   margin: 0;
   font-weight: 500;
+}
+
+.order-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.action-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.confirm-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.prepare-btn {
+  background-color: #2196F3;
+  color: white;
+}
+
+.ready-btn {
+  background-color: #FF9800;
+  color: white;
+}
+
+.cancel-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.ready-status,
+.picked-up-status,
+.delivered-status,
+.cancelled-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.ready-badge {
+  background-color: #FF9800;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.picked-up-badge {
+  background-color: #2196F3;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.delivered-badge {
+  background-color: #4CAF50;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.cancelled-badge {
+  background-color: #f44336;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
 } 
