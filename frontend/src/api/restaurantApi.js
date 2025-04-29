@@ -1,5 +1,6 @@
 // src/api/restaurantApi.js
 import axios from 'axios';
+import orderApi from './orderApi';
 
 // Create an axios instance with a base URL
 const restaurantApi = axios.create({
@@ -150,5 +151,17 @@ function getMockDataForEndpoint(url, method) {
   // For other endpoints, return null (no mock data available)
   return null;
 }
+
+// Add a new method to fetch orders from the order service
+restaurantApi.getOrders = async (restaurantId) => {
+  try {
+    const response = await orderApi.get(`/orders?restaurantId=${restaurantId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    // Return mock data if the API fails
+    return getMockDataForEndpoint(`/restaurants/${restaurantId}/orders`, 'GET');
+  }
+};
 
 export default restaurantApi;
