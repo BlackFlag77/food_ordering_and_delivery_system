@@ -11,6 +11,7 @@ const cors         = require('cors');
 const morgan       = require('morgan');
 const connectDB    = require('./config/db');
 const ordersRouter = require('./routes/orders');
+const cartRouter = require('./routes/carts');
 
 const app = express();
 
@@ -42,13 +43,16 @@ app.use(morgan('dev'));
 
 // --- Routes ---
 app.use('/api/orders', ordersRouter);
+app.use('/api/carts', cartRouter);
 
 // --- Global error handler ---
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res
-    .status(err.statusCode || 500)
-    .json({ message: err.message || 'Internal Server Error' });
+  // use statusCode if set, otherwise fall back to status, otherwise 500
+  const status = err.statusCode || err.status || 500;
+  res.status(status).json({
+    message: err.message || 'Internal Server Error'
+  });
 });
 
 // --- Start server after DB connection ---
