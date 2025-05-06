@@ -35,13 +35,19 @@ exports.getMyOrders = async (req, res, next) => {
 
 exports.createOrder = async (req, res, next) => {
   try {
+    const { restaurantId } = req.body;
+
+    if (!restaurantId) {
+      return res.status(400).json({ message: 'restaurantId is required' });
+    }
+    
     // 1) Fetch user's cart
-    const cart = await Cart.findOne({ customerId: req.user.id });
+    const cart = await Cart.findOne({ customerId: req.user.id, restaurantId });
     if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ message: 'Cart is empty' });
+      return res.status(400).json({ message: 'Cart is empty for this restaurant' });
     }
 
-    const { restaurantId, items: requestedItems } = cart;
+    const {items: requestedItems } = cart;
 
     const restaurantResp = await axios.get(
       `${process.env.RESTAURANT_SERVICE_URL}/restaurants/${restaurantId}`,
@@ -89,7 +95,7 @@ exports.createOrder = async (req, res, next) => {
     });
 
     // 6) Clear the cart after successful order
-    await Cart.deleteOne({ customerId: req.user.id });
+    await Cart.deleteOne({ customerId: req.user.id, restaurantId });
 
     // 7) Return created order
     res.status(201).json(order);

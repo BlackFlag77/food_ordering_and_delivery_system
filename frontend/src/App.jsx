@@ -17,6 +17,7 @@ import CustomerOrders from './pages/CustomerOrders';
 import OrderDetail from './pages/OrderDetail';
 import RestaurantsList from './pages/RestaurantsList';
 import RestaurantMenu from './pages/RestaurantMenu';
+import CartPage from './pages/CartPage';
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
                 <Route path="customer" element={<CustomerDashboard />} />
                 <Route path="customer/restaurants" element={<RestaurantsList />} />
                 <Route path="customer/restaurant/:restaurantId" element={<RestaurantMenu />} />
+                <Route path="customer/cart" element={<CartPage />} />
                 <Route path="customer/orders" element={<CustomerOrders />} />
                 <Route path="customer/orders/:id" element={<OrderDetail />} />
               </Route>

@@ -6,6 +6,8 @@ import orderApi from '../api/orderApi';
 import { AuthContext } from '../context/AuthContext';
 import RestaurantCoverImage from '../components/RestaurantCoverImage';
 import RestaurantLogo from '../components/RestaurantLogo';
+import AddToCartModal from '../components/AddToCartModal';
+import Swal from 'sweetalert2';
 
 export default function RestaurantMenu() {
   const { restaurantId } = useParams();
@@ -18,8 +20,19 @@ export default function RestaurantMenu() {
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
-  const [showOrderFormItem, setShowOrderFormItem] = useState(null);  // ← ADDED
-  const [orderFormQty, setOrderFormQty]       = useState(1);         // ← ADDED
+  const [showFormItem, setShowFormItem] = useState(null);
+  const [formQty, setFormQty] = useState(1);        
+
+
+  // UPDATED: Load cart from backend
+  const loadCart = async () => {
+    try {
+      const { data } = await orderApi.get(`/carts?restaurantId=${restaurantId}`);
+      setCart(data.items ? data.items : data);
+    } catch (err) {
+      console.error('Failed to load cart:', err);
+    }
+  };
 
   // Function to load restaurant and menu data
   const loadRestaurantAndMenu = useCallback(async () => {
@@ -53,7 +66,8 @@ export default function RestaurantMenu() {
       // Load menu items
       const { data: menuData } = await restaurantApi.get(`/restaurants/${restaurantId}/menu`);
       setMenuItems(menuData);
-      
+      await loadCart();
+
       setError(null);
       setLastUpdated(new Date());
     } catch (err) {
@@ -79,96 +93,58 @@ export default function RestaurantMenu() {
     return () => clearInterval(intervalId);
   }, [loadRestaurantAndMenu]);
 
-  const addToCart = (item) => {
-    if (!item.isAvailable) return;
-    
-    const existingItem = cart.find(cartItem => cartItem._id === item._id);
-    
-    if (existingItem) {
-      setCart(cart.map(cartItem => 
-        cartItem._id === item._id 
-          ? { ...cartItem, quantity: cartItem.quantity + 1 } 
-          : cartItem
-      ));
-    } else {
-      setCart([...cart, { ...item, quantity: 1 }]);
-    }
-    
-    setShowCart(true);
-  };
+  
 
-  const removeFromCart = (itemId) => {
-    setCart(cart.filter(item => item._id !== itemId));
-    if (cart.length === 1) {
-      setShowCart(false);
-    }
-  };
-
-  const updateQuantity = (itemId, newQuantity) => {
-    if (newQuantity < 1) return;
-    
-    setCart(cart.map(item => 
-      item._id === itemId 
-        ? { ...item, quantity: newQuantity } 
-        : item
-    ));
-  };
-
-  const placeOrder = async () => {
-    if (cart.length === 0) return;
-    
-    try {
-      // Create an order with multiple items
-      const orderItems = cart.map(item => ({
-        menuItemId: item._id,
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price
-      }));
-      
-      await orderApi.post('/orders', {
-        restaurantId,
-        items: orderItems,
-        total: calculateTotal()
-      });
-      
-      // Clear cart and show success message
-      setCart([]);
-      setShowCart(false);
-      alert('Order placed successfully!');
-      
-      // Navigate to orders page
-      navigate('/customer/orders');
-    } catch (err) {
-      console.error('Order error:', err.response || err);
-      alert('Could not place order. Please try again.');
-    }
-  };
-
-  const handleOrderFormSubmit = async e => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    if (!showOrderFormItem) return;
     try {
-      await orderApi.post('/orders', {
+      await orderApi.post('/carts', {
         restaurantId,
-        items: [{
-          menuItemId: showOrderFormItem._id,
-          name:       showOrderFormItem.name,
-          quantity:   orderFormQty,
-          price:      showOrderFormItem.price
-        }]
+        menuItemId: showFormItem._id,
+        quantity: formQty
       });
-      alert('Order placed successfully!');
-      setShowOrderFormItem(null);
+      await loadCart();
+      setShowFormItem(null);
+      setFormQty(1);
+      Swal.fire({
+        icon: 'success',
+        title: 'Added to cart!',
+        showConfirmButton: false,
+        timer: 1500
+      });
     } catch (err) {
-      console.error('Order error:', err.response || err);
-      alert('Could not place order. Please try again.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Add to Cart Failed',
+        text: err?.message || 'An unknown error occurred',
+      });
+    }
+  };
+  
+  const handleGoToCart = async () => {
+    try {
+      await orderApi.post('/carts', {
+        restaurantId,
+        menuItemId: showFormItem._id,
+        quantity: formQty
+      });
+      navigate(`/customer/cart?restaurantId=${restaurantId}`);
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Cart Error',
+        text: err?.message || 'An unknown error occurred',
+      });
     }
   };
 
-  const calculateTotal = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-  };
+  if (loading && !restaurant) return <div className="container"><p>Loading...</p></div>;
+  if (error && !restaurant) return <div className="container"><p>{error}</p></div>;
+
+
+  // const calculateTotal = () => {
+  //   return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+  // };
 
   const handleRefresh = () => {
     loadRestaurantAndMenu();
@@ -238,6 +214,9 @@ export default function RestaurantMenu() {
       
       <div className="menu-section">
         <h3>Menu</h3>
+        <button className="view-cart-btn" onClick={() => navigate(`/customer/cart?restaurantId=${restaurantId}`)}>
+          🛒 View Full Cart
+        </button>
         
         {menuItems.length > 0 ? (
           <div className="menu-grid">
@@ -264,71 +243,21 @@ export default function RestaurantMenu() {
                   </div>
                   <p className="price">${item.price.toFixed(2)}</p>
                   <button
-                    className="add-to-cart-btn"
-                    disabled={!item.isAvailable || !restaurant.availability}
+                    disabled={!item.isAvailable}
+                    className="btn btn-cart"
                     onClick={() => {
-                      setShowOrderFormItem(item);
-                      setOrderFormQty(1);
+                      const existingItem = cart.find(ci => ci.menuItemId === item._id);
+                      setFormQty(existingItem ? existingItem.quantity : 1);
+                      setShowFormItem(item);
                     }}
                   >
-                    {!restaurant.availability 
-                      ? 'Restaurant Closed' 
-                      : item.isAvailable 
-                        ? 'Order Now' 
-                        : 'Unavailable'}
+                    {cart.find(ci => ci.menuItemId === item._id) ? 'Update Cart' : 'Add to Cart'}
                   </button>
-
-                  {/* ───── BEAUTIFUL ORDER FORM MODAL ───── */}
-                  {showOrderFormItem?._id === item._id && (
-                    <div className="order-modal">
-                      <form className="order-form-card" onSubmit={handleOrderFormSubmit}>
-                        <button
-                          type="button"
-                          className="close-modal-btn"
-                          onClick={() => setShowOrderFormItem(null)}
-                        >
-                      
-                        </button>
-                        <h4 className="order-form-title">Order: {item.name}</h4>
-
-                        <div className="quantity-selector">
-                          <button
-                            type="button"
-                            onClick={() => setOrderFormQty(q => Math.max(1, q - 1))}
-                          >
-                            −
-                          </button>
-                          <input
-                            type="number"
-                            min="1"
-                            value={orderFormQty}
-                            onChange={e => setOrderFormQty(Math.max(1, +e.target.value))}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setOrderFormQty(q => q + 1)}
-                          >
-                            +
-                          </button>
-                        </div>
-
-                        <div className="order-form-actions">
-                          <button type="submit" className="btn-primary">
-                            make order
-                          </button>
-                          <button
-                            type="button"
-                            className="btn-secondary"
-                            onClick={() => setShowOrderFormItem(null)}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  )}
+ 
                 </div>
               </div>
+
+              
             ))}
           </div>
         ) : (
@@ -337,68 +266,16 @@ export default function RestaurantMenu() {
           </div>
         )}
       </div>
-      
-      {showCart && (
-        <div className="cart-sidebar">
-          <div className="cart-header">
-            <h3>Your Order</h3>
-            <button className="close-cart-btn" onClick={() => setShowCart(false)}>×</button>
-          </div>
-          
-          {cart.length > 0 ? (
-            <>
-              <div className="cart-items">
-                {cart.map(item => (
-                  <div key={item._id} className="cart-item">
-                    <div className="cart-item-info">
-                      <h4>{item.name}</h4>
-                      <p className="price">${item.price.toFixed(2)}</p>
-                    </div>
-                    <div className="cart-item-quantity">
-                      <button 
-                        onClick={() => updateQuantity(item._id, item.quantity - 1)}
-                        disabled={item.quantity <= 1}
-                      >
-                        -
-                      </button>
-                      <span>{item.quantity}</span>
-                      <button 
-                        onClick={() => updateQuantity(item._id, item.quantity + 1)}
-                      >
-                        +
-                      </button>
-                    </div>
-                    <button 
-                      className="remove-item-btn"
-                      onClick={() => removeFromCart(item._id)}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="cart-footer">
-                <div className="cart-total">
-                  <span>Total:</span>
-                  <span className="total-amount">${calculateTotal().toFixed(2)}</span>
-                </div>
-                <button 
-                  className="place-order-btn"
-                  onClick={placeOrder}
-                  disabled={!restaurant.availability}
-                >
-                  {restaurant.availability ? 'Place Order' : 'Restaurant Closed'}
-                </button>
-              </div>
-            </>
-          ) : (
-            <div className="empty-cart">
-              <p>Your cart is empty</p>
-            </div>
-          )}
-        </div>
-      )}
+      <AddToCartModal
+        item={showFormItem}
+        quantity={formQty}
+        setQuantity={setFormQty}
+        onCancel={() => setShowFormItem(null)}
+        onAddToCart={(e) => handleFormSubmit(e)}
+        onGoToCart={(e) => handleGoToCart(e)}
+      />
+
     </div>
   );
+  
 } 
