@@ -1,9 +1,22 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
+
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+
 export default function CustomerDashboard() {
+
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Redirect to restaurants list
+    navigate('/customer/restaurants');
+  }, [navigate]);
+
   return (
     <div className="container">
-      <h2>Customer Dashboard</h2>
-      <p>Welcome! Your profile is managed here. Food ordering UI will plug in soon.</p>
+      <div className="loading-spinner">Redirecting to restaurants...</div>
+
     </div>
   );
 }

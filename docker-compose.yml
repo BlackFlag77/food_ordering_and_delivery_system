@@ -19,9 +19,46 @@ services:
     build: ./backend/order_service
     container_name: order_service
     env_file: ./backend/order_service/.env
-    ports: ["4001:4001"]
-    depends_on: [user_service]
+    ports: ["5001:5001"]
+    depends_on: [user_service, restaurant_service]
     networks: [app-net]
+
+  payment_service:
+    build: ./backend/payment_service
+    container_name: payment_service
+    env_file: ./backend/payment_service/.env
+    ports: ["6001:6000"]
+    depends_on: [order_service]
+    networks: [app-net]
+
+   
+  notification_serivce:
+    build: ./backend/notification_serivce
+    container_name: notification_service
+    env_file:
+      - ./backend/notification_serivce/.env
+    ports:
+      - "7000:7000"
+    depends_on:
+      - user_service
+      - order_service
+      - payment_service
+    networks:
+      - app-net
+  # notification_serivce:
+  #   build: ./backend/notification_serivce
+  #   container_name: notification_serivce
+  #   env_file: 
+  #   - ./backend/notification_serivce/.env
+  #   ports: 
+  #   - ["7000:7000"]
+  #   depends_on:
+  #   -  user_service
+  #   -  order_service
+  #   -  payment_service
+  #   networks: 
+  #   -  [app-net]  
+    
 
   frontend:
     build: ./frontend

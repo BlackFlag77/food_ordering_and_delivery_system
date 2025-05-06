@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: restaurant-service-config
+  namespace: food-delivery
+data:
+  NODE_ENV: "development"
+  RESTAURANT_SERVICE_PORT: "4000"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restaurant-service
+  namespace: food-delivery
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: restaurant-service
+  template:
+    metadata:
+      labels:
+        app: restaurant-service
+    spec:
+      containers:
+      - name: restaurant-service
+        image: restaurant-service:latest
+        ports:
+        - containerPort: 4000
+        envFrom:
+        - configMapRef:
+            name: restaurant-service-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: restaurant-service
+  namespace: food-delivery
+spec:
+  selector:
+    app: restaurant-service
+  ports:
+  - port: 4000
+    targetPort: 4000
+  type: ClusterIP 

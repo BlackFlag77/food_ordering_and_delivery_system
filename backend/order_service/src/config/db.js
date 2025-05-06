@@ -1,3 +1,4 @@
+// src/config/db.js
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
@@ -11,7 +12,7 @@ const connectDB = async () => {
     await mongoose.connect(uri);
     console.log('[Success] MongoDB connected');
   } catch (err) {
-    console.error('[Error] MongoDB connection failed:', err.message);
+    console.error('[Fatal] MongoDB connection failed:', err.message);
     process.exit(1);
   }
 
@@ -19,7 +20,7 @@ const connectDB = async () => {
     console.error('[MongoDB] Error:', e.message)
   );
 
-  // Do NOT auto‑reconnect during tests to allow clean shutdown
+  // Auto-reconnect except during tests
   if (process.env.NODE_ENV !== 'test') {
     mongoose.connection.on('disconnected', () => {
       console.warn('[MongoDB] Disconnected. Reconnecting...');
