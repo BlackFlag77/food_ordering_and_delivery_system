@@ -49,6 +49,7 @@ exports.createOrder = async (req, res, next) => {
 
     const {items: requestedItems } = cart;
 
+    // 2) Fetch restaurant details & check availability
     const restaurantResp = await axios.get(
       `${process.env.RESTAURANT_SERVICE_URL}/restaurants/${restaurantId}`,
       { headers: { Authorization: req.headers.authorization } }
@@ -57,14 +58,15 @@ exports.createOrder = async (req, res, next) => {
     if (!restaurant.availability) {
       return res.status(400).json({ message: 'Restaurant is currently not accepting orders' });
     }
-    
+    // 3) Fetch restaurant's menu for validation
 
-    // 2) Fetch restaurant's menu for validation
     const menuResp = await axios.get(
       `${process.env.RESTAURANT_SERVICE_URL}/restaurants/${restaurantId}/menu`,
       { headers: { Authorization: req.headers.authorization } }
     );
+
     const menuItems = menuResp.data;
+
 
     // 3) Validate items in the cart
     const validatedItems = requestedItems.map(({ menuItemId, quantity }) => {
@@ -85,14 +87,21 @@ exports.createOrder = async (req, res, next) => {
 
     // 4) Compute total
     const total = validatedItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    const { data: user } = await axios.get(
+      `${process.env.USER_SERVICE_URL}/users/${req.user.id}`,
+      { headers :{ Authorization: req.headers.authorization }}
+    );
 
-    // 5) Create and save the order
+    // 6) Create and save the order
+    console.log(user); // optional debug
     const order = await Order.create({
       customerId: req.user.id,
       restaurantId,
       items: validatedItems,
+      stripeCustomerId: user.stripeCustomerId,
       total
     });
+
 
     // 6) Clear the cart after successful order
     await Cart.deleteOne({ customerId: req.user.id, restaurantId });
@@ -245,7 +254,7 @@ exports.patchStatus = async (req, res, next) => {
     const adminStatuses = ['CONFIRMED','PREPARING','READY'];
     const deliveryStatuses = ['PICKED_UP','DELIVERED'];
 
-    if (adminStatuses.includes(s) && req.user.role !== 'restaurant_admin')
+    if (adminStatuses.includes(s) && !['restaurant_admin','customer'].includes(req.user.role))
       return res.status(403).end();
     if (deliveryStatuses.includes(s) && req.user.role !== 'delivery_personnel')
       return res.status(403).end();

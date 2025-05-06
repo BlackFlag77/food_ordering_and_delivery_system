@@ -4,6 +4,9 @@ import { AuthProvider } from './context/AuthContext';
 import AppHeader from './components/AppHeader';
 import AppFooter from './components/AppFooter';
 import ProtectedRoute from './components/ProtectedRoute';
+// import React from 'react';
+import Checkout from './pages/Checkout';
+import Payments from './pages/Payment';
 
 import LandingPage from './pages/LandingPage';
 import RegisterPage from './pages/RegisterPage';
@@ -19,6 +22,7 @@ import RestaurantsList from './pages/RestaurantsList';
 import RestaurantMenu from './pages/RestaurantMenu';
 import CartPage from './pages/CartPage';
 
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -30,6 +34,8 @@ export default function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="register" element={<RegisterPage />} />
               <Route path="login" element={<LoginPage />} />
+
+
 
               {/* protected */}
               <Route element={<ProtectedRoute />}>
@@ -49,6 +55,12 @@ export default function App() {
               <Route element={<ProtectedRoute roles={['delivery_personnel']} />}>
                 <Route path="delivery" element={<DeliveryDashboard />} />
               </Route>
+              <Route element={<ProtectedRoute />}>
+                <Route path="checkout/:orderId" element={<Checkout />} />
+              </Route>
+              <Route element={<ProtectedRoute />}>
+                <Route path="/payments" element={<Payments />} />
+              </Route>
               <Route element={<ProtectedRoute roles={['admin']} />}>
                 <Route path="admin/users" element={<UserListPage />} />
               </Route>
@@ -56,6 +68,7 @@ export default function App() {
           </main>
           <AppFooter />
         </div>
+
       </AuthProvider>
     </BrowserRouter>
   );

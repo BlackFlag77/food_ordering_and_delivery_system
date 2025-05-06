@@ -2,13 +2,17 @@ const Joi = require('joi');
 
 // Strong password: min 8 chars, at least 1 uppercase, 1 lowercase, 1 digit, 1 special
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).{8,}$/;
-
+const phonePattern = /^\+\d{10,15}$/;
 const selfRegisterSchema = Joi.object({
   name:     Joi.string().min(2).max(50).required(),
   email:    Joi.string().email().required(),
   password: Joi.string()
                 .pattern(passwordPattern)
                 .message('Password must be 8+ chars, include upper, lower, number & special')
+                .required(),
+phoneNumber: Joi.string()
+                .pattern(phonePattern)
+                .message('Phone must be in E.164 format, e.g. +15551234567')
                 .required(),
   role:     Joi.string()
                 .valid('customer','restaurant_admin')
@@ -18,6 +22,10 @@ const selfRegisterSchema = Joi.object({
 const updateSchema = Joi.object({
   name:     Joi.string().min(2).max(50),
   email:    Joi.string().email(),
+  phoneNumber: Joi.string()
+                  .pattern(phonePattern)
+                  .message('Phone must be in E.164 format, e.g. +15551234567')
+                  .required(),
   password: Joi.string()
                 .pattern(passwordPattern)
                 .message('Password must be 8+ chars, include upper, lower, number & special')
