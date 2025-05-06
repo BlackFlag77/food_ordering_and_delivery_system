@@ -1,11 +1,13 @@
 // src/context/AuthContext.jsx
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import api from '../api/axios';
 import jwtDecode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 
-// Create AuthContext to hold user info and raw JWT	export const AuthContext = createContext();
+// Create AuthContext to hold user info and raw JWT
 export const AuthContext = createContext();
+
+// Consumer hook
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -17,7 +19,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const nav = useNavigate();
 
-  // 1) Lazy‐load token from localStorage
+  // 1) Lazy-load token from localStorage
   const [token, setToken] = useState(() => localStorage.getItem('token'));
 
   // 2) Derive user from token on mount, catch bad tokens
@@ -32,7 +34,7 @@ export const AuthProvider = ({ children }) => {
     }
   });
 
-  // 3) Sync token → localStorage & update user whenever it changes
+  // 3) Sync token ↔ localStorage & update user whenever it changes
   useEffect(() => {
     if (token) {
       localStorage.setItem('token', token);
@@ -44,38 +46,21 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-  // 4) Exposed actions
-  const login = (newToken) => setToken(newToken);
-  const logout = () => {
-    setToken(null);
-    nav('/login');
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-
+  // 4) Actions
   const login = async (data) => {
-  const res = await api.post('/auth/login', data);
-  // Store token and user
-  localStorage.setItem('token', res.data.token);
-  setToken(res.data.token);
-  setUser(res.data.user);
+    const res = await api.post('/auth/login', data);
+    localStorage.setItem('token', res.data.token);
+    setToken(res.data.token);
+    setUser(res.data.user);
 
-  // Redirect by role
-  switch (res.data.user.role) {
-    case 'customer':           return nav('/customer');
-    case 'restaurant_admin':   return nav('/restaurant');
-    case 'delivery_personnel': return nav('/delivery');
-    case 'admin':              return nav('/admin/users');
-    default:                   return nav('/');
-  }
-};
-
+    switch (res.data.user.role) {
+      case 'customer':           return nav('/customer');
+      case 'restaurant_admin':   return nav('/restaurant');
+      case 'delivery_personnel': return nav('/delivery');
+      case 'admin':              return nav('/admin/users');
+      default:                   return nav('/');
+    }
+  };
 
   const register = async (data) => {
     await api.post('/auth/register', data);
@@ -86,7 +71,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
-    // Remove the automatic navigation
+    nav('/login');
   };
 
   return (
