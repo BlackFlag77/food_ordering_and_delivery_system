@@ -3,7 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 
 export default function RegisterPage() {
   const { register } = useContext(AuthContext);
-  const [form, setForm] = useState({ name:'', email:'', password:'', role:'customer' });
+  const [form, setForm] = useState({ name:'', email:'', password:'', role:'customer',phoneNumber: '' });
 
   const onSubmit = e => {
     e.preventDefault();
@@ -29,6 +29,16 @@ export default function RegisterPage() {
         <div className="form-group">
           <label>Email</label>
           <input type="email" required value={form.email} onChange={e=>setForm({...form,email:e.target.value})}/>
+        </div>
+        <div className="form-group">
+          <label>Phone Number</label>
+          <input
+            type="tel"
+            placeholder="+15551234567"
+            required
+            value={form.phoneNumber}
+            onChange={e => setForm({ ...form, phoneNumber: e.target.value })}
+          />
         </div>
         <div className="form-group">
           <label>Password</label>

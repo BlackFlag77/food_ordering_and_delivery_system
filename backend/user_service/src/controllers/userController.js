@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
-
+const stripe = require('stripe')(process.env.STRIPE_SECRET);
 /**
  * Create a new user.
  * - Only 'admin' can hit this route.
@@ -8,7 +8,7 @@ const bcrypt = require('bcryptjs');
  */
 exports.createUser = async (req, res, next) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, phoneNumber  } = req.body;
 
     if (role === 'admin' && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Only an admin may create another admin' });
@@ -19,7 +19,8 @@ exports.createUser = async (req, res, next) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const createdUser = await new User({ name, email, password: hashedPassword, role }).save();
+    const customer = await stripe.customers.create({ name, email });
+    const createdUser = await new User({ name, email, password: hashedPassword,stripeCustomerId: customer.id , role,phoneNumber}).save();
 
     res.status(201).json({
       message: 'User created successfully',
@@ -27,7 +28,9 @@ exports.createUser = async (req, res, next) => {
         id: createdUser.id,
         name: createdUser.name,
         email: createdUser.email,
-        role: createdUser.role
+        stripeCustomerId: customer.id,
+        role: createdUser.role,
+        phoneNumber: createdUser.phoneNumber
       }
     });
   } catch (err) {
@@ -133,12 +136,12 @@ exports.getCurrentUser = async (req, res, next) => {
     next(err);
   }
 };
+exports.viewAssignedDeliveries = (req, res) => {
+  res.json({ message: `Viewing deliveries assigned to user ${req.user.id}` });
+};
 
 
 /**
  * Delivery personnel → view assigned deliveries.
  * - stub: in real life, query Orders by req.user.id
  */
-exports.viewAssignedDeliveries = (req, res) => {
-  res.json({ message: `Viewing deliveries assigned to user ${req.user.id}` });
-};

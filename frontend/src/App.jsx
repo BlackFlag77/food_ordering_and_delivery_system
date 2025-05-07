@@ -4,6 +4,9 @@ import { AuthProvider } from './context/AuthContext';
 import AppHeader from './components/AppHeader';
 import AppFooter from './components/AppFooter';
 import ProtectedRoute from './components/ProtectedRoute';
+// import React from 'react';
+import Checkout from './pages/Checkout';
+import Payments from './pages/Payment';
 
 import LandingPage from './pages/LandingPage';
 import RegisterPage from './pages/RegisterPage';
@@ -17,6 +20,8 @@ import CustomerOrders from './pages/CustomerOrders';
 import OrderDetail from './pages/OrderDetail';
 import RestaurantsList from './pages/RestaurantsList';
 import RestaurantMenu from './pages/RestaurantMenu';
+import CartPage from './pages/CartPage';
+
 
 export default function App() {
   return (
@@ -30,6 +35,8 @@ export default function App() {
               <Route path="register" element={<RegisterPage />} />
               <Route path="login" element={<LoginPage />} />
 
+
+
               {/* protected */}
               <Route element={<ProtectedRoute />}>
                 <Route path="profile" element={<ProfilePage />} />
@@ -38,6 +45,7 @@ export default function App() {
                 <Route path="customer" element={<CustomerDashboard />} />
                 <Route path="customer/restaurants" element={<RestaurantsList />} />
                 <Route path="customer/restaurant/:restaurantId" element={<RestaurantMenu />} />
+                <Route path="customer/cart" element={<CartPage />} />
                 <Route path="customer/orders" element={<CustomerOrders />} />
                 <Route path="customer/orders/:id" element={<OrderDetail />} />
               </Route>
@@ -47,6 +55,12 @@ export default function App() {
               <Route element={<ProtectedRoute roles={['delivery_personnel']} />}>
                 <Route path="delivery" element={<DeliveryDashboard />} />
               </Route>
+              <Route element={<ProtectedRoute />}>
+                <Route path="checkout/:orderId" element={<Checkout />} />
+              </Route>
+              <Route element={<ProtectedRoute />}>
+                <Route path="/payments" element={<Payments />} />
+              </Route>
               <Route element={<ProtectedRoute roles={['admin']} />}>
                 <Route path="admin/users" element={<UserListPage />} />
               </Route>
@@ -54,6 +68,7 @@ export default function App() {
           </main>
           <AppFooter />
         </div>
+
       </AuthProvider>
     </BrowserRouter>
   );

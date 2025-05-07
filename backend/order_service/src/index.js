@@ -1,5 +1,8 @@
 // src/index.js
 require('dotenv').config();
+console.log('📂 CWD =', process.cwd());
+console.log('🛡️  JWT_SECRET =', process.env.JWT_SECRET);
+console.log('order-service JWT_SECRET is:', process.env.JWT_SECRET);
 
 console.log('→ USER_SERVICE_URL is', process.env.USER_SERVICE_URL);
 console.log('→ RESTAURANT_SERVICE_URL is', process.env.RESTAURANT_SERVICE_URL);
@@ -11,6 +14,7 @@ const cors         = require('cors');
 const morgan       = require('morgan');
 const connectDB    = require('./config/db');
 const ordersRouter = require('./routes/orders');
+const cartRouter = require('./routes/carts');
 
 const app = express();
 
@@ -42,13 +46,16 @@ app.use(morgan('dev'));
 
 // --- Routes ---
 app.use('/api/orders', ordersRouter);
+app.use('/api/carts', cartRouter);
 
 // --- Global error handler ---
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res
-    .status(err.statusCode || 500)
-    .json({ message: err.message || 'Internal Server Error' });
+  // use statusCode if set, otherwise fall back to status, otherwise 500
+  const status = err.statusCode || err.status || 500;
+  res.status(status).json({
+    message: err.message || 'Internal Server Error'
+  });
 });
 
 // --- Start server after DB connection ---

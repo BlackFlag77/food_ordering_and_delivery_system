@@ -6,7 +6,8 @@ export default function CreateUserModal({ onClose, onCreated }) {
     name: '',
     email: '',
     role: 'customer',
-    password: ''
+    password: '',
+    phoneNumber: ''
   });
 
   const submit = async (e) => {
@@ -42,6 +43,16 @@ export default function CreateUserModal({ onClose, onCreated }) {
               required
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
+          </div>
+          <div className="form-group">
+            <label>Phone Number</label>
+            <input
+              type="tel"
+              placeholder="+15551234567"
+              required
+              value={form.phoneNumber}
+              onChange={e => setForm({ ...form, phoneNumber: e.target.value })}
             />
           </div>
 

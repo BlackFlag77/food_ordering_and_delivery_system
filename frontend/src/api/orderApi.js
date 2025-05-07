@@ -2,7 +2,8 @@
 import axios from 'axios';
 
 const orderApi = axios.create({
-  baseURL: import.meta.env.VITE_ORDER_SERVICE_URL || 'http://localhost:5001/api'
+  baseURL: import.meta.env.VITE_ORDER_SERVICE_URL || 'http://localhost:5001/api',
+  timeout: 10000
 });
 
 // Attach JWT token if present
