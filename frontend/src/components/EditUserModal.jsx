@@ -7,6 +7,7 @@ export default function EditUserModal({ user, onClose, onSaved }) {
   const [form, setForm] = useState({
     name: user.name || '',
     email: user.email || '',
+    phoneNumber: user.phoneNumber || '',
     role: user.role || 'customer'
   });
 
@@ -45,6 +46,18 @@ export default function EditUserModal({ user, onClose, onSaved }) {
               onChange={(e) => setForm({ ...form, email: e.target.value })}
             />
           </div>
+          
+          <div className="form-group">
+            <label>Phone Number</label>
+            <input
+              type="tel"
+              placeholder="+15551234567"
+              required
+              value={form.phoneNumber}
+              onChange={e => setForm({ ...form, phoneNumber: e.target.value })}
+            />
+          </div>
+
 
           <div className="form-group">
             <label>Role</label>
