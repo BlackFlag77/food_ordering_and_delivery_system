@@ -4,6 +4,7 @@ import CreateUserModal from '../../components/CreateUserModal';
 import EditUserModal from '../../components/EditUserModal';
 import UserDetailDrawer from '../../components/UserDetailDrawer';
 import { AuthContext } from '../../context/AuthContext';
+import swal from 'sweetalert2';
 
 export default function UserListPage() {
   const { user } = useContext(AuthContext);
@@ -29,9 +30,35 @@ export default function UserListPage() {
   };
 
   const onDelete = async (id) => {
-    if (window.confirm('Delete user?')) {
-      await api.delete(`/users/${id}`);
-      fetch();
+    const result = await swal.fire({
+      title: 'Are you sure?',
+      text: 'This action cannot be undone!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await api.delete(`/users/${id}`);
+        swal.fire({
+          icon: 'success',
+          title: 'User Deleted',
+          text: 'The user has been deleted successfully.',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        fetch(); // reload user list
+      } catch (err) {
+        swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err.response?.data?.message || 'Failed to delete user.',
+        });
+      }
     }
   };
 

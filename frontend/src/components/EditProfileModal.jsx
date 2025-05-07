@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import api from '../api/axios';
+import swal from 'sweetalert2';
 
 export default function EditProfileModal({ user, onClose, onUpdated }) {
   const [form, setForm] = useState({
     name: user.name || '',
     email: user.email || '',
-    password: '',
+    phoneNumber: user.phoneNumber || '',
     role: user.role || ''
   });
 
@@ -15,20 +16,31 @@ export default function EditProfileModal({ user, onClose, onUpdated }) {
       const payload = {
         name: form.name,
         email: form.email,
+        phoneNumber: form.phoneNumber,
         role: form.role
       };
 
-      if (form.password.trim()) {
-        payload.password = form.password;
-      }
-
+  
       // Make sure backend returns updated user
       const res = await api.patch(`/users/${user._id}`, payload);
+      swal.fire({
+        icon: 'success',
+        title: 'Profile Updated',
+        text: 'Your profile has been updated successfully.',
+        timer: 2000,
+        showConfirmButton: false
+      });
 
       // Send updated user to ProfilePage
       onUpdated(res.data.user);
     } catch (err) {
-      alert(err.response?.data?.message || err.message);
+      swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.response?.data?.message || err.message,
+        confirmButtonText: 'OK'
+      });
+      //alert(err.response?.data?.message || err.message);
     }
   };
 
@@ -59,12 +71,12 @@ export default function EditProfileModal({ user, onClose, onUpdated }) {
           </div>
 
           <div className="form-group">
-            <label>New Password (optional)</label>
+            <label>Phone Number</label>
             <input
-              type="password"
-              placeholder="Leave blank to keep current password"
-              value={form.password}
-              onChange={e => setForm({ ...form, password: e.target.value })}
+              type="tel"
+              required
+              value={form.phoneNumber}
+              onChange={e => setForm({ ...form, phoneNumber: e.target.value })}
             />
           </div>
 

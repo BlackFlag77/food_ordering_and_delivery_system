@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import api from '../api/axios';
+import Swal from 'sweetalert2';
 
 export default function CreateUserModal({ onClose, onCreated }) {
   const [form, setForm] = useState({
@@ -14,9 +15,23 @@ export default function CreateUserModal({ onClose, onCreated }) {
     e.preventDefault();
     try {
       await api.post('/users', form);
+      Swal.fire({
+        icon: 'success',
+        title: 'User Created',
+        text: 'The user has been created successfully.',
+        timer: 2000,
+        showConfirmButton: false
+      });
+      
       onCreated();
     } catch (err) {
-      alert(err.response?.data?.message || err.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.response?.data?.message || err.message,
+        confirmButtonText: 'OK'
+      });
+      //alert(err.response?.data?.message || err.message);
     }
   };
 
