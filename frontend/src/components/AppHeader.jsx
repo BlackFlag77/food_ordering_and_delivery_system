@@ -83,6 +83,7 @@ const AppHeader = () => {
                   My Orders
                 </Link>
               )}
+               
               {user.role === 'restaurant' && (
                 <Link 
                   to="/restaurant/dashboard" 
@@ -101,6 +102,13 @@ const AppHeader = () => {
                   Admin Dashboard
                 </Link>
               )}
+              <Link 
+                  to="/profile" 
+                  className={`nav-link ${isActive('/profile') ? 'active' : ''}`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Profile
+                </Link>
               <button 
                 className="nav-link" 
                 onClick={handleLogout}
