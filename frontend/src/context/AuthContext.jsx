@@ -3,6 +3,7 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import api from '../api/axios';
 import jwtDecode from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 // Create AuthContext to hold user info and raw JWT
 export const AuthContext = createContext();
@@ -48,6 +49,7 @@ export const AuthProvider = ({ children }) => {
 
   // 4) Actions
   const login = async (data) => {
+    try {
     const res = await api.post('/auth/login', data);
     localStorage.setItem('token', res.data.token);
     setToken(res.data.token);
@@ -60,18 +62,32 @@ export const AuthProvider = ({ children }) => {
       case 'admin':              return nav('/admin/users');
       default:                   return nav('/');
     }
+      } catch (err) {
+        const message = err.response?.data?.message || 'Login failed';
+        throw new Error(message); // Send it to the component for SweetAlert
+      }
   };
 
   const register = async (data) => {
-    await api.post('/auth/register', data);
-    nav('/login');
+    try {
+      await api.post('/auth/register', data);
+      nav('/login');
+    } catch (err) {
+      const message = err?.response?.data?.message || 'Registration failed';
+      throw new Error(message); // So SweetAlert can show it
+    }
   };
 
   const logout = () => {
+    try {
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
     nav('/login');
+  } catch (err) {
+    const message = err?.response?.data?.message || 'Logout failed';
+    throw new Error(message); // So SweetAlert can show it
+  }
   };
 
   return (

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSearchParams } from 'react-router-dom';
 import orderApi from '../api/orderApi';
+import Swal from 'sweetalert2';
 
 
 export default function CartPage() {
@@ -30,40 +31,81 @@ export default function CartPage() {
     try {
       if (quantity < 1) return removeItem(menuItemId);
       await orderApi.patch(`/carts/${menuItemId}?restaurantId=${restaurantId}`, { quantity });
+      await Swal.fire({
+        icon: 'success',
+        title: 'Quantity Updated',
+        text: 'The quantity has been updated successfully!',
+        timer: 2000,
+        showConfirmButton: false
+      });
       await loadCart();
     } catch {
-      alert('Failed to update quantity');
+      Swal.fire({
+        icon: 'error',
+        title: 'Update Failed',
+        text: 'Failed to update quantity. Please try again.',
+      });
     }
   };
 
   const removeItem = async (menuItemId) => {
     try {
       await orderApi.delete(`/carts/${menuItemId}?restaurantId=${restaurantId}`);
+      await Swal.fire({
+        icon: 'success',
+        title: 'Item Removed',
+        text: 'The item has been removed from your cart.',
+        timer: 2000,
+        showConfirmButton: false
+      });
       await loadCart();
     } catch {
-      alert('Failed to remove item');
+      Swal.fire({
+        icon: 'error',
+        title: 'Remove Failed',
+        text: 'Failed to remove item. Please try again.',
+      });
     }
   };
 
   const clearCart = async () => {
     try {
       await orderApi.delete(`/carts?restaurantId=${restaurantId}`);
+      await Swal.fire({
+        icon: 'success',
+        title: 'Cart Cleared',
+        text: 'Your cart has been cleared successfully!',
+        timer: 2000,
+        showConfirmButton: false
+      });
       await loadCart();
     } catch {
-      alert('Failed to clear cart');
+      Swal.fire({
+        icon: 'error',
+        title: 'Clear Failed',
+        text: 'Failed to clear cart. Please try again.',
+      });
     }
   };
 
   const placeOrder = async () => {
     try {
       await orderApi.post('/orders', { restaurantId });
-      alert('Order placed successfully!');
+      Swal.fire({
+              icon: 'success',
+              title: 'Order Placed successfully',
+              text: 'Your order has been placed successfully! Make payment to confirm your order.',
+              showConfirmButton: true
+            });
       navigate('/customer/orders');
-    } catch (err) {
-      console.error('Order Error:', err.response?.data);
-      alert(err.response?.data?.message || 'Order failed');
-    }
-  };
+      } catch (err) {
+        Swal.fire({
+                icon: 'error',
+                title: 'Order Failed',
+                text: err.response?.data?.message || 'An unknown error occurred',
+              });
+      }
+    };
 
   const calculateTotal = () =>
     cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
