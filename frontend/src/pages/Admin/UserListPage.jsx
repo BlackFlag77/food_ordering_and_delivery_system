@@ -41,13 +41,14 @@ export default function UserListPage() {
       <button onClick={onCreate}>Create User</button>
       <table style={{ width: '100%', marginTop: '1em', borderCollapse: 'collapse' }}>
         <thead>
-          <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+          <tr><th>Name</th><th>Email</th><th>Phone Number</th><th>Role</th><th>Actions</th></tr>
         </thead>
         <tbody>
           {users.map(u => (
             <tr key={u._id} style={{ borderTop: '1px solid #ddd' }}>
               <td onClick={() => setDrawerUser(u)} style={{ cursor: 'pointer' }}>{u.name}</td>
               <td>{u.email}</td>
+              <td>{u.phoneNumber}</td>
               <td>{u.role}</td>
               <td>
                 <button onClick={() => onEdit(u)}>Edit</button>{' '}

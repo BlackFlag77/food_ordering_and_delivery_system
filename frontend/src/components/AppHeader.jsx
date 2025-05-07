@@ -59,7 +59,7 @@ const AppHeader = () => {
                   Home
                 </Link>
               )}
-          {!isHomePage && !isLoginPage && !isRegisterPage && !isAdminRetaurantspage &&(
+          {user?.role === 'customer'&&!isHomePage && !isLoginPage && !isRegisterPage && !isAdminRetaurantspage &&(
             <>
               
               <Link 
@@ -94,8 +94,8 @@ const AppHeader = () => {
               )}
               {user.role === 'admin' && (
                 <Link 
-                  to="/admin/dashboard" 
-                  className={`nav-link ${isActive('/admin/dashboard') ? 'active' : ''}`}
+                  to="/admin/users" 
+                  className={`nav-link ${isActive('/admin/users') ? 'active' : ''}`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Admin Dashboard
