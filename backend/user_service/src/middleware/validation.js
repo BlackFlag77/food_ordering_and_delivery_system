@@ -39,9 +39,14 @@ const adminCreateSchema = Joi.object({
   name:     selfRegisterSchema.extract('name'),
   email:    selfRegisterSchema.extract('email'),
   password: selfRegisterSchema.extract('password'),
+  phoneNumber: Joi.string()
+                .pattern(phonePattern)
+                .message('Phone must be in E.164 format, e.g. +15551234567')
+                .required(), 
   role:     Joi.string()
                 .valid('customer','restaurant_admin','delivery_personnel','admin')
-                .required()
+                .required(),
+               
 });
 
 const loginSchema = Joi.object({
