@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import api from '../api/axios';
+import Swal from 'sweetalert2';
 
 export default function EditUserModal({ user, onClose, onSaved }) {
   if (!user) return null;
@@ -15,9 +16,22 @@ export default function EditUserModal({ user, onClose, onSaved }) {
     e.preventDefault();
     try {
       await api.patch(`/users/${user._id}`, form);
+      Swal.fire({
+        icon: 'success',
+        title: 'User Updated',
+        text: 'The user has been updated successfully.',
+        timer: 2000,
+        showConfirmButton: false
+      });
       onSaved();
     } catch (err) {
-      alert(err.response?.data?.message || err.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.response?.data?.message || err.message,
+        confirmButtonText: 'OK'
+      });
+      //alert(err.response?.data?.message || err.message);
     }
   };
 

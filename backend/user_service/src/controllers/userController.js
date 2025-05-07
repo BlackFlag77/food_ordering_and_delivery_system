@@ -75,7 +75,7 @@ exports.getUserById = async (req, res, next) => {
 exports.updateUser = async (req, res, next) => {
   try {
     //const updates = { name: req.body.name};
-    const updates = { name: req.body.name,email: req.body.email,password: req.body.password };
+    const updates = { name: req.body.name,email: req.body.email,password: req.body.password,phoneNumber: req.body.phoneNumber, };
 
     if (req.body.password) {
       updates.password = await bcrypt.hash(req.body.password, 12); // hash before saving
