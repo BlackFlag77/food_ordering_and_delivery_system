@@ -108,7 +108,7 @@ export default function RestaurantMenu() {
       setFormQty(1);
       Swal.fire({
         icon: 'success',
-        title: 'Added to cart!',
+        title: 'Added to the cart!',
         showConfirmButton: false,
         timer: 1500
       });

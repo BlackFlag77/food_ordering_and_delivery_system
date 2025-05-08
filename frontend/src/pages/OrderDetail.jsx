@@ -76,7 +76,7 @@ export default function OrderDetail() {
         <div>
           <h1 className="text-4xl font-bold text-green-700 flex items-center gap-2 mb-1">
             <CollectionIcon className="w-8 h-8 text-green-600" />
-            Order #{order._id.slice(-6)}
+            Order :{order._id.slice(-6)}
           </h1>
           <p className="text-sm text-gray-500">Placed successfully. Thank you for ordering with us!</p>
         </div>

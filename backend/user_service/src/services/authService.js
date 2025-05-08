@@ -30,7 +30,7 @@ exports.register = async ({ name, email, password, role,phoneNumber  }) => {
   }).save();
 
   const token = jwt.sign(
-    { user: { id: newUser.id, role: newUser.role,phoneNumber:  newUser.phoneNumber } },
+    { user: { id: newUser.id,name: newUser.name, role: newUser.role,phoneNumber:  newUser.phoneNumber } },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
@@ -63,7 +63,7 @@ exports.login = async ({ nameOrEmail, password }) => {
   }
 
   const token = jwt.sign(
-    { user: { id: existingUser.id, role: existingUser.role } },
+    { user: { id: existingUser.id, name: existingUser.name, role: existingUser.role } },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
@@ -71,6 +71,6 @@ exports.login = async ({ nameOrEmail, password }) => {
   return {
     message: 'Login successful',
     token,
-    user: { id: existingUser.id, role: existingUser.role,phoneNumber:  existingUser.phoneNumber }
+    user: { id: existingUser.id, name: existingUser.name, role: existingUser.role,phoneNumber:  existingUser.phoneNumber }
   };
 };
