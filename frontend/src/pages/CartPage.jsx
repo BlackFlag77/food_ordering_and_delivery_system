@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import orderApi from '../api/orderApi';
 import restaurantApi from '../api/restaurantApi';
+import placeholderFood from '../assets/placeholder-food.jpg';
 import Swal from 'sweetalert2';
 import {
   TrashIcon,
@@ -37,7 +38,7 @@ export default function CartPage() {
         const match = menuItems.find(mi => mi._id.toString() === cartItem.menuItemId.toString());
         return {
           ...cartItem,
-          image: match?.imageUrl ||'/assets/placeholder-food.jpg'
+          image: match?.imageUrl ||placeholderFood
         };
       });
       setCart(enriched);
