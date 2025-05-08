@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import swal from 'sweetalert2';
 
 export default function LoginPage() {
   const { login } = useContext(AuthContext);
@@ -11,9 +12,20 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(form);
+      swal.fire({
+              icon: 'success',
+              title: 'Login Successfully',
+              text: 'You have logged in successfully!',
+              timer: 2000,
+              showConfirmButton: false
+            });
+
     } catch (err) {
-      alert(err.response?.data?.message || err.message);
-      setLoading(false);
+      swal.fire({
+              icon: 'error',
+              title: 'Login Failed',
+              text: err.message || 'An unknown error occurred',
+            });
     }
   };
 

@@ -1,27 +1,35 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import Swal from 'sweetalert2';
 
 export default function RegisterPage() {
   const { register } = useContext(AuthContext);
-  const [form, setForm] = useState({ name:'', email:'', password:'', role:'customer',phoneNumber: '' });
+  const [form, setForm] = useState({ name:'', email:'', password:'', phoneNumber: '',role: 'customer' });
 
-  const onSubmit = e => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    register(form);
+    try {
+      await register(form);
+      Swal.fire({
+        icon: 'success',
+        title: 'Register Successfully',
+        text: 'Your account has been created successfully!',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Registration Failed',
+        text: err.message || 'An unknown error occurred',
+      });
+    }
   };
 
   return (
     <div className="container">
       <h2>Register</h2>
       <form onSubmit={onSubmit}>
-        <div className="form-group">
-          <label>Role</label>
-          <select value={form.role} onChange={e=>setForm({...form,role:e.target.value})}>
-            <option value="customer">Customer</option>
-            <option value="restaurant_admin">Restaurant Admin</option>
-            <option value="delivery_personnel">Delivery Person</option>
-          </select>
-        </div>
         <div className="form-group">
           <label>Name</label>
           <input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/>

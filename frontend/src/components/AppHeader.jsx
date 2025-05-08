@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/AppHeader.css';
+import swal from 'sweetalert2';
 
 const AppHeader = () => {
   const { user, logout } = useAuth();
@@ -17,13 +18,26 @@ const AppHeader = () => {
   const handleLogout = async () => {
     try {
       await logout();
+      swal.fire({
+        icon: 'success',
+        title: 'Logged out successfully',
+        text: 'You have been logged out.',
+        timer: 2000,
+        showConfirmButton: false,
+      });
       setIsMobileMenuOpen(false);
       // Only navigate to home if we're not already there
       if (location.pathname !== '/') {
         navigate('/');
       }
     } catch (error) {
-      console.error('Logout failed:', error);
+      swal.fire({
+        icon: 'error',
+        title: 'Logout failed',
+        text: error.response?.data?.message || error.message,
+        showConfirmButton: true,
+      }); 
+      //console.error('Logout failed:', error);
     }
   };
 
@@ -59,7 +73,7 @@ const AppHeader = () => {
                   Home
                 </Link>
               )}
-          {!isHomePage && !isLoginPage && !isRegisterPage && !isAdminRetaurantspage &&(
+          {user?.role === 'customer'&&!isHomePage && !isLoginPage && !isRegisterPage && !isAdminRetaurantspage &&(
             <>
               
               <Link 
@@ -83,6 +97,7 @@ const AppHeader = () => {
                   My Orders
                 </Link>
               )}
+               
               {user.role === 'restaurant' && (
                 <Link 
                   to="/restaurant/dashboard" 
@@ -94,13 +109,20 @@ const AppHeader = () => {
               )}
               {user.role === 'admin' && (
                 <Link 
-                  to="/admin/dashboard" 
-                  className={`nav-link ${isActive('/admin/dashboard') ? 'active' : ''}`}
+                  to="/admin/users" 
+                  className={`nav-link ${isActive('/admin/users') ? 'active' : ''}`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Admin Dashboard
                 </Link>
               )}
+              <Link 
+                  to="/profile" 
+                  className={`nav-link ${isActive('/profile') ? 'active' : ''}`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Profile
+                </Link>
               <button 
                 className="nav-link" 
                 onClick={handleLogout}
