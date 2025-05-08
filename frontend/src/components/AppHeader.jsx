@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/AppHeader.css';
+import swal from 'sweetalert2';
 
 const AppHeader = () => {
   const { user, logout } = useAuth();
@@ -17,13 +18,26 @@ const AppHeader = () => {
   const handleLogout = async () => {
     try {
       await logout();
+      swal.fire({
+        icon: 'success',
+        title: 'Logged out successfully',
+        text: 'You have been logged out.',
+        timer: 2000,
+        showConfirmButton: false,
+      });
       setIsMobileMenuOpen(false);
       // Only navigate to home if we're not already there
       if (location.pathname !== '/') {
         navigate('/');
       }
     } catch (error) {
-      console.error('Logout failed:', error);
+      swal.fire({
+        icon: 'error',
+        title: 'Logout failed',
+        text: error.response?.data?.message || error.message,
+        showConfirmButton: true,
+      }); 
+      //console.error('Logout failed:', error);
     }
   };
 
