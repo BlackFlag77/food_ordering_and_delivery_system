@@ -23,16 +23,14 @@ export default function CheckoutForm() {
   useEffect(() => {
     if (!token) return;
     axios.get(
-      `${import.meta.env.VITE_ORDER_SERVICE_URL}/api/orders/${orderId}`,
+      `${import.meta.env.VITE_ORDER_SERVICE_URL}/orders/${orderId}`,
       { headers: { Authorization: `Bearer ${token}` } }
     )
     .then(res => {
       const o = res.data;
       // Prefer restaurantName; otherwise join item names
-      setOrderName(
-        o.restaurantName ||
-        o.items.map(i => i.name).join(', ')
-      );
+      setOrderName(o.items.map(i => i.name).join(', ') || 'your order');
+
     })
     .catch(err => {
       console.error('Failed to load order:', err);
@@ -121,7 +119,7 @@ export default function CheckoutForm() {
             width: '100%',
             padding: '0.75rem',
             fontSize: '1rem',
-            backgroundColor: isProcessing ? '#999' : '#5469d4',
+            backgroundColor: isProcessing ? '#999' : '#508D4E',
             color: '#fff',
             border: 'none',
             borderRadius: '4px',

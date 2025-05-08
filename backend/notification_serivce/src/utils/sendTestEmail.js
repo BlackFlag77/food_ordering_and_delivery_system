@@ -23,6 +23,6 @@ module.exports = async function sendTestEmail(to, subject, text) {
   });
 
   // 4) Log the preview URL so you can view it in your browser
-  console.log('📧 Preview your email at:', nodemailer.getTestMessageUrl(info));
+  console.log('Preview your email at:', nodemailer.getTestMessageUrl(info));
   return info;
 };
