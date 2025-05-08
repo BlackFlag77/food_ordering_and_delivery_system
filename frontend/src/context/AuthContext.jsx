@@ -28,14 +28,14 @@ export const AuthProvider = ({ children }) => {
     if (!token) return null;
     try {
       const { user: u } = jwtDecode(token);
-      return { id: u.id, role: u.role };
+      return { id: u.id, role: u.role, name: u.name };
     } catch {
       localStorage.removeItem('token');
       return null;
     }
   });
 
-  // 3) Sync token ↔ localStorage & update user whenever it changes
+  // 3) Sync token localStorage & update user whenever it changes
   useEffect(() => {
     if (token) {
       localStorage.setItem('token', token);
