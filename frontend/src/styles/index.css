@@ -2279,7 +2279,7 @@ input:checked + .toggle-slider:before {
   justify-content: space-between;
   min-height: 500px;
   margin-bottom: 4rem;
-  background: linear-gradient(135deg, rgba(74, 107, 255, 0.1), rgba(255, 107, 107, 0.1));
+  background: linear-gradient(135deg, rgba(156, 243, 195, 0.009), rgba(58, 131, 63, 0.1));
   border-radius: var(--radius-lg);
   padding: 3rem;
   box-shadow: var(--shadow-md);
@@ -2376,7 +2376,7 @@ input:checked + .toggle-slider:before {
 }
 
 .feature-card {
-  background: white;
+  background: linear-gradient(135deg,  rgba(156, 243, 195, 0.009), rgba(58, 131, 63, 0.1));
   padding: 2rem;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
