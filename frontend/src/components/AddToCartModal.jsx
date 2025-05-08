@@ -30,11 +30,8 @@ export default function AddToCartModal({
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
             <ShoppingCartIcon className="w-6 h-6 text-green-600" />
-            Add {item.name} to Cart
+            Add {item.name} to the Cart
           </h3>
-          <button onClick={onCancel} className="text-gray-400 hover:text-red-500 transition">
-            <XIcon className="w-6 h-6" />
-          </button>
         </div>
 
         <form onSubmit={onAddToCart} className="space-y-6">
