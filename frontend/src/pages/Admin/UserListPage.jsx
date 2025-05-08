@@ -13,6 +13,7 @@ export default function UserListPage() {
   const [editUser, setEditUser] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [drawerUser, setDrawerUser] = useState(null);
+  const [search, setSearch] = useState('');
 
   const fetch = () => {
     api.get('/users')
@@ -22,6 +23,13 @@ export default function UserListPage() {
 
   useEffect(fetch, []);
 
+  
+  const filteredUsers = users.filter(u =>
+    u.name.toLowerCase().includes(search.toLowerCase()) ||
+    u.email.toLowerCase().includes(search.toLowerCase()) ||
+    u.phoneNumber?.toLowerCase().includes(search.toLowerCase()) ||
+    u.role.toLowerCase().includes(search.toLowerCase())
+  );
   const onCreate = () => setShowCreateModal(true);
 
   const onEdit = (user) => {
@@ -66,12 +74,23 @@ export default function UserListPage() {
     <div className="container">
       <h2>Manage Users</h2>
       <button onClick={onCreate}>Create User</button>
+
+      <div className="form-group" style={{ marginTop: '1em' }}>
+        <input
+          type="text"
+          placeholder="Search by name, email, phone or role"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ padding: '0.5em', width: '100%', maxWidth: '400px' }}
+        />
+      </div>
+
       <table style={{ width: '100%', marginTop: '1em', borderCollapse: 'collapse' }}>
         <thead>
           <tr><th>Name</th><th>Email</th><th>Phone Number</th><th>Role</th><th>Actions</th></tr>
         </thead>
         <tbody>
-          {users.map(u => (
+          {filteredUsers.map(u => (
             <tr key={u._id} style={{ borderTop: '1px solid #ddd' }}>
               <td onClick={() => setDrawerUser(u)} style={{ cursor: 'pointer' }}>{u.name}</td>
               <td>{u.email}</td>
