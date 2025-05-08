@@ -5,6 +5,7 @@ import EditUserModal from '../../components/EditUserModal';
 import UserDetailDrawer from '../../components/UserDetailDrawer';
 import { AuthContext } from '../../context/AuthContext';
 import swal from 'sweetalert2';
+import '../../styles/index.css';
 
 export default function UserListPage() {
   const { user } = useContext(AuthContext);

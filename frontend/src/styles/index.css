@@ -1,4 +1,8 @@
 /* Root reset & variables */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
     --primary: #508D4E;
     --primary-dark: #1A5319;
@@ -13,7 +17,7 @@
     --gray: #6c757d;
     --gray-light: #e9ecef;
     --white: #ffffff;
-    --bg: #D6EFD8;
+    --bg: #ffffff;
     --font: 'Segoe UI', sans-serif;
     --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
     --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
