@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       localStorage.setItem('token', token);
       const { user: u } = jwtDecode(token);
-      setUser({ id: u.id, role: u.role });
+      setUser({ id: u.id, role: u.role, name: u.name });
     } else {
       localStorage.removeItem('token');
       setUser(null);

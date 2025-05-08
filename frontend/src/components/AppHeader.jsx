@@ -116,13 +116,18 @@ const AppHeader = () => {
                   Admin Dashboard
                 </Link>
               )}
-              <Link 
-                  to="/profile" 
-                  className={`nav-link ${isActive('/profile') ? 'active' : ''}`}
+              
+              {user && (
+                <Link
+                  to="/profile"
                   onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--accent-dark)] text-white font-bold text-lg shadow-md ml-4 hover:opacity-90 transition"
+                  title="Profile"
                 >
-                  Profile
+                  {user.name?.trim()?.[0]?.toUpperCase() || '?'}
                 </Link>
+              )}
+
               <button 
                 className="nav-link" 
                 onClick={handleLogout}
