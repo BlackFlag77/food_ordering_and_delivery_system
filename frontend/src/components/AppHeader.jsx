@@ -97,6 +97,16 @@ const AppHeader = () => {
                   My Orders
                 </Link>
               )}
+              
+              {user.role === 'customer' && (
+                <Link 
+                  to="/payments" 
+                  className={`nav-link ${isActive('/payments') ? 'active' : ''}`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  My Payment
+                </Link>
+              )}
                
               {user.role === 'restaurant' && (
                 <Link 

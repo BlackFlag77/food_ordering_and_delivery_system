@@ -2,13 +2,14 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import swal from 'sweetalert2';
+import { motion } from 'framer-motion';
 import {
   UserIcon,
   LockClosedIcon,
   ArrowRightIcon,
   ExclamationCircleIcon,
   GlobeAltIcon,
-  CodeIcon
+  CodeIcon,
 } from '@heroicons/react/outline';
 
 export default function LoginPage() {
@@ -16,7 +17,7 @@ export default function LoginPage() {
   const [form, setForm] = useState({ nameOrEmail: '', password: '' });
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = async e => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
@@ -26,7 +27,7 @@ export default function LoginPage() {
         title: 'Welcome back!',
         text: 'You have logged in successfully.',
         timer: 2000,
-        showConfirmButton: false
+        showConfirmButton: false,
       });
     } catch (err) {
       swal.fire({
@@ -40,33 +41,43 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center p-8 ">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      className="flex items-center justify-center p-8"
+    >
       <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 items-stretch bg-white rounded-2xl shadow-xl overflow-hidden">
-        {/* Hero Panel (desktop only) */}
-        <div className="hidden md:flex flex-col items-center justify-center bg-gradient-to-br from-green-700 to-green-600 text-white p-8 h-full">
-
-        {/* Decorative Circles */}
-        <div className="absolute -top-20 -right-20 w-80 h-80 bg-white opacity-10 rounded-full"></div>
-        <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-white opacity-5 rounded-full"></div>
-
+        {/* Hero Panel */}
+        <motion.div
+          initial={{ x: -30, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="hidden md:flex flex-col items-center justify-center bg-gradient-to-br from-green-700 to-green-600 text-white p-8 h-full relative"
+        >
+          <div className="absolute -top-20 -right-20 w-80 h-80 bg-white opacity-10 rounded-full"></div>
+          <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-white opacity-5 rounded-full"></div>
 
           <UserIcon className="h-16 w-16 mb-4 animate-pulse" />
           <h2 className="text-3xl font-bold mb-2">Welcome Back!</h2>
           <p className="text-center max-w-xs">
             Sign in to manage your orders, track deliveries, and explore restaurants.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Your Existing Form (now stretched to match) */}
-        <div className="flex flex-col justify-center p-8 bg-gradient-to-br from-green-50 to-white h-full">
-          {/* Logo + Heading */}
+        {/* Login Form Panel */}
+        <motion.div
+          initial={{ x: 30, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="flex flex-col justify-center p-8 bg-gradient-to-br from-green-50 to-white h-full"
+        >
           <div className="text-center">
             <UserIcon className="mx-auto h-12 w-12 text-green-600" />
             <h2 className="mt-4 text-3xl font-extrabold text-gray-900">Welcome back</h2>
             <p className="mt-2 text-sm text-gray-600">Sign in to your account below</p>
           </div>
 
-          {/* Social Buttons */}
           <div className="mt-6 grid grid-cols-2 gap-3">
             <button
               type="button"
@@ -84,7 +95,6 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* Divider */}
           <div className="mt-6 relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300" />
@@ -96,9 +106,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Form */}
           <form onSubmit={onSubmit} className="mt-6 space-y-6">
-            {/* Username / Email */}
             <div>
               <label htmlFor="nameOrEmail" className="block text-sm font-medium text-gray-700">
                 Username or Email
@@ -114,14 +122,13 @@ export default function LoginPage() {
                   required
                   disabled={loading}
                   value={form.nameOrEmail}
-                  onChange={e => setForm({ ...form, nameOrEmail: e.target.value })}
+                  onChange={(e) => setForm({ ...form, nameOrEmail: e.target.value })}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
                   placeholder="you@example.com"
                 />
               </div>
             </div>
 
-            {/* Password */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
@@ -137,14 +144,13 @@ export default function LoginPage() {
                   required
                   disabled={loading}
                   value={form.password}
-                  onChange={e => setForm({ ...form, password: e.target.value })}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
                   placeholder="••••••••"
                 />
               </div>
             </div>
 
-            {/* Remember me & Forgot */}
             <div className="flex items-center justify-between">
               <label className="flex items-center text-sm">
                 <input
@@ -161,7 +167,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Submit */}
             <div>
               <button
                 type="submit"
@@ -188,15 +193,14 @@ export default function LoginPage() {
             </div>
           </form>
 
-          {/* Sign up link */}
           <p className="mt-6 text-center text-sm text-gray-600">
             Don’t have an account?{' '}
             <a href="/register" className="font-medium text-green-600 hover:underline">
               Register now
             </a>
           </p>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
