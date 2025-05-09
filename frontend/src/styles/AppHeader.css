@@ -45,13 +45,13 @@
 }
 
 .nav-link:hover {
-  color: #1A5319;
+  color: #ffffff;
   background-color: rgba(214, 239, 216, 0.2);
 }
 
 .nav-link.active {
   color: #D6EFD8;
-  background-color: #1A5319;
+  background-color: #033502;
 }
 
 .mobile-menu-btn {

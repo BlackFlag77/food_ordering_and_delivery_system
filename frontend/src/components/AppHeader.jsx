@@ -64,15 +64,15 @@ const AppHeader = () => {
         </button>
 
         <nav className={`nav-menu ${isMobileMenuOpen ? 'active' : ''}`}>
-          {!isCustomerOrdersPage && !isCustomerRestaurantsPage && (
-                <Link 
-                  to="/" 
-                  className={`nav-link ${isActive('/') ? 'active' : ''}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Home
-                </Link>
-              )}
+         {!user && (
+            <Link 
+              to="/" 
+              className={`nav-link ${isActive('/') ? 'active' : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Home
+            </Link>
+          )}
           {user?.role === 'customer'&&!isHomePage && !isLoginPage && !isRegisterPage && !isAdminRetaurantspage &&(
             <>
               
@@ -97,6 +97,16 @@ const AppHeader = () => {
                   My Orders
                 </Link>
               )}
+              
+              {user.role === 'customer' && (
+                <Link 
+                  to="/payments" 
+                  className={`nav-link ${isActive('/payments') ? 'active' : ''}`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  My Payment
+                </Link>
+              )}
                
               {user.role === 'restaurant' && (
                 <Link 
@@ -116,20 +126,45 @@ const AppHeader = () => {
                   Admin Dashboard
                 </Link>
               )}
+
               <Link 
-                  to="/profile" 
-                  className={`nav-link ${isActive('/profile') ? 'active' : ''}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Profile
-                </Link>
-              <button 
                 className="nav-link" 
                 onClick={handleLogout}
                 style={{ background: 'none', border: 'none', cursor: 'pointer' }}
               >
                 Logout
-              </button>
+                </Link>
+                
+                <Link
+                  to="/profile"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  title={user.name}
+                  className="
+                    relative
+                    flex items-center justify-center
+                    w-12 h-12
+                    bg-gradient-to-br from-green-600 to-green-800
+                    rounded-full
+                    text-white text-xl font-semibold
+                    shadow-lg
+                    ring-2 ring-white ring-offset-2 ring-offset-green-800
+                    transition-transform duration-200 ease-out
+                    hover:scale-110 hover:shadow-2xl
+                    ml-4
+                  "
+                >
+                  {user.name?.trim()?.[0]?.toUpperCase() || '?'}
+
+                  {/* online-status dot */}
+                  <span className="
+                    absolute bottom-0 right-0
+                    w-3 h-3
+                    bg-green-400
+                    border-2 border-white
+                    rounded-full
+                  " />
+                </Link>
+              
             </>
           ) : (
             <>
