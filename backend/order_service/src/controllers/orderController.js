@@ -108,18 +108,27 @@ exports.createOrder = async (req, res, next) => {
 
     try {
       const shortOrderId = order._id.toString().slice(-6);
+      const itemsSummary = order.items
+        .map(item => `${item.quantity}× ${item.name}`)
+        .join(', ');
       const subject = 'Order Created!';
       const text = `
 Hi ${user.name || 'Customer'},
 
 Your order #${shortOrderId} has been placed successfully.
 
-Total: $${order.total.toFixed(2)}
-Restaurant: ${restaurant.name}
+Order item/items: 
+${itemsSummary}
+
+Total: 
+$${order.total.toFixed(2)}
+
+Restaurant: 
+${restaurant.name}
 
 You can now proceed to payment to confirm your order.
 
-– The FoodiePortal Team
+The FoodiePortal Team
       `.trim();
 
       await axios.post(
@@ -133,7 +142,7 @@ You can now proceed to payment to confirm your order.
       );
 
       if (user.phoneNumber) {
-        const waBody = ` Order Placed!\nYour order #${shortOrderId} was created.\nTotal: $${order.total.toFixed(2)}.\nConfirm it by making a payment.`;
+        const waBody = ` Order Placed!\nYour order #${shortOrderId} was created.\nOrder item/items: $${itemsSummary} \nTotal: $${order.total.toFixed(2)}.\nConfirm it by making a payment.\n– The FoodiePortal Team`;
         await axios.post(
           `${process.env.NOTIFI_SERVICE_URL}/notifications/whatsapp`,
           {

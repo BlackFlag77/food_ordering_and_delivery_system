@@ -81,8 +81,8 @@ export default function Payments() {
     <div className="max-w-5xl mx-auto px-4 py-10">
       {/* Header */}
       <div className="flex flex-col items-center mb-10 text-center">
-        <CreditCardIcon className="w-10 h-10 text-green-600 mb-2" />
-        <h2 className="text-3xl font-bold text-gray-800">Payment History</h2>
+        <CreditCardIcon className="flex w-10 h-10 text-green-600 mb-2" />
+        <h2 className="flex text-3xl font-bold text-[var(--primary-dark)]">Payment History</h2>
         <p className="text-gray-600 text-sm mt-1">
           Here you can review all the payments you've made for your orders.
         </p>
