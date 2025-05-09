@@ -106,13 +106,51 @@ exports.createOrder = async (req, res, next) => {
     // 6) Clear the cart after successful order
     await Cart.deleteOne({ customerId: req.user.id, restaurantId });
 
-    // 7) Return created order
-    res.status(201).json(order);
+    try {
+      const shortOrderId = order._id.toString().slice(-6);
+      const subject = 'Order Created!';
+      const text = `
+Hi ${user.name || 'Customer'},
 
-  } catch (err) {
-    if (err.status && err.message) {
-      return res.status(err.status).json({ error: err.message });
+Your order #${shortOrderId} has been placed successfully.
+
+Total: $${order.total.toFixed(2)}
+Restaurant: ${restaurant.name}
+
+You can now proceed to payment to confirm your order.
+
+– The FoodiePortal Team
+      `.trim();
+
+      await axios.post(
+        `${process.env.NOTIFI_SERVICE_URL}/notifications/email`,
+        {
+          to: user.email,
+          subject,
+          text
+        },
+        { headers: { Authorization: req.headers.authorization } }
+      );
+
+      if (user.phoneNumber) {
+        const waBody = ` Order Placed!\nYour order #${shortOrderId} was created.\nTotal: $${order.total.toFixed(2)}.\nConfirm it by making a payment.`;
+        await axios.post(
+          `${process.env.NOTIFI_SERVICE_URL}/notifications/whatsapp`,
+          {
+            to: user.phoneNumber,
+            body: waBody
+          },
+          { headers: { Authorization: req.headers.authorization } }
+        );
+      }
+    } catch (notifErr) {
+      console.error('[Notification Error]', notifErr.message);
     }
+
+    // 9) Return created order
+    res.status(201).json(order);
+  } catch (err) {
+    if (err.status && err.message) return res.status(err.status).json({ error: err.message });
     next(err);
   }
 };
