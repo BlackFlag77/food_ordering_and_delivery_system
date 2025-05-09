@@ -76,6 +76,13 @@ exports.patchPaymentStatus = async (req, res, next) => {
     if (!payment) {
       return res.status(404).json({ error: 'Payment not found' });
     }
+    const { data: order } = await axios.get(
+            `${process.env.ORDER_SERVICE_URL}/api/orders/${payment.orderId}`,
+            { headers: { Authorization: authHeader } }
+          );
+          const orderName = order.restaurantName
+            || order.items.map(i => i.name).join(', ')
+            || `#${payment.orderId}`;
 
     // 2) If it just succeeded, notify via email & WhatsApp
     if (status === 'succeeded') {
@@ -88,11 +95,11 @@ exports.patchPaymentStatus = async (req, res, next) => {
 
       // b) prepare messages
       const amount  = (payment.amount);
-      const subject = '🎉 Your payment succeeded!';
+      const subject = 'Your payment succeeded!';
       const text    = `
 Hi ${name || 'Customer'},
 
-We’ve received your payment of $${amount} for order #${payment.orderId}.
+We’ve received your payment of $${amount} for order #${orderName}.
 Thank you for your purchase!
 
 — The FoodiePortal Team
@@ -106,12 +113,12 @@ Thank you for your purchase!
           { headers: { Authorization: authHeader } }
         );
       } catch (emailErr) {
-        console.error('❌ Failed to send notification email:', emailErr.message);
+        console.error('Failed to send notification email:', emailErr.message);
       }
 
       // d) call Notification Service → WhatsApp
       if (phoneNumber) {
-        const waBody = `✅ Your payment of $${amount} for order #${payment.orderId} succeeded!`;
+        const waBody = `Your payment of $${amount} for order ${orderName} succeeded!`;
         try {
           await axios.post(
             `${process.env.NOTIFI_SERVICE_URL}/notifications/whatsapp`,
@@ -119,7 +126,7 @@ Thank you for your purchase!
             { headers: { Authorization: authHeader } }
           );
         } catch (waErr) {
-          console.error('❌ Failed to send WhatsApp message:', waErr.message);
+          console.error('Failed to send WhatsApp message:', waErr.message);
         }
       }
     }

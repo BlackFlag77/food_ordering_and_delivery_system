@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/AppHeader.css';
+import swal from 'sweetalert2';
 
 const AppHeader = () => {
   const { user, logout } = useAuth();
@@ -17,13 +18,26 @@ const AppHeader = () => {
   const handleLogout = async () => {
     try {
       await logout();
+      swal.fire({
+        icon: 'success',
+        title: 'Logged out successfully',
+        text: 'You have been logged out.',
+        timer: 2000,
+        showConfirmButton: false,
+      });
       setIsMobileMenuOpen(false);
       // Only navigate to home if we're not already there
       if (location.pathname !== '/') {
         navigate('/');
       }
     } catch (error) {
-      console.error('Logout failed:', error);
+      swal.fire({
+        icon: 'error',
+        title: 'Logout failed',
+        text: error.response?.data?.message || error.message,
+        showConfirmButton: true,
+      }); 
+      //console.error('Logout failed:', error);
     }
   };
 
@@ -50,16 +64,16 @@ const AppHeader = () => {
         </button>
 
         <nav className={`nav-menu ${isMobileMenuOpen ? 'active' : ''}`}>
-          {!isCustomerOrdersPage && !isCustomerRestaurantsPage && (
-                <Link 
-                  to="/" 
-                  className={`nav-link ${isActive('/') ? 'active' : ''}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Home
-                </Link>
-              )}
-          {!isHomePage && !isLoginPage && !isRegisterPage && !isAdminRetaurantspage &&(
+         {!user && (
+            <Link 
+              to="/" 
+              className={`nav-link ${isActive('/') ? 'active' : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Home
+            </Link>
+          )}
+          {user?.role === 'customer'&&!isHomePage && !isLoginPage && !isRegisterPage && !isAdminRetaurantspage &&(
             <>
               
               <Link 
@@ -83,6 +97,7 @@ const AppHeader = () => {
                   My Orders
                 </Link>
               )}
+               
               {user.role === 'restaurant' && (
                 <Link 
                   to="/restaurant/dashboard" 
@@ -94,20 +109,52 @@ const AppHeader = () => {
               )}
               {user.role === 'admin' && (
                 <Link 
-                  to="/admin/dashboard" 
-                  className={`nav-link ${isActive('/admin/dashboard') ? 'active' : ''}`}
+                  to="/admin/users" 
+                  className={`nav-link ${isActive('/admin/users') ? 'active' : ''}`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Admin Dashboard
                 </Link>
               )}
-              <button 
+
+              <Link 
                 className="nav-link" 
                 onClick={handleLogout}
                 style={{ background: 'none', border: 'none', cursor: 'pointer' }}
               >
                 Logout
-              </button>
+                </Link>
+                
+                <Link
+                  to="/profile"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  title={user.name}
+                  className="
+                    relative
+                    flex items-center justify-center
+                    w-12 h-12
+                    bg-gradient-to-br from-green-600 to-green-800
+                    rounded-full
+                    text-white text-xl font-semibold
+                    shadow-lg
+                    ring-2 ring-white ring-offset-2 ring-offset-green-800
+                    transition-transform duration-200 ease-out
+                    hover:scale-110 hover:shadow-2xl
+                    ml-4
+                  "
+                >
+                  {user.name?.trim()?.[0]?.toUpperCase() || '?'}
+
+                  {/* online-status dot */}
+                  <span className="
+                    absolute bottom-0 right-0
+                    w-3 h-3
+                    bg-green-400
+                    border-2 border-white
+                    rounded-full
+                  " />
+                </Link>
+              
             </>
           ) : (
             <>

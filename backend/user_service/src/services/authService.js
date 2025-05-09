@@ -7,6 +7,13 @@ const stripe    = require('stripe')(process.env.STRIPE_SECRET);
  * Throws 400 if email in use.
  */
 exports.register = async ({ name, email, password, role,phoneNumber  }) => {
+
+  if (await User.findOne({ name })) {
+    const err = new Error('Name already in use');
+    err.statusCode = 400;
+    throw err;
+  }
+
   if (await User.findOne({ email })) {
     const err = new Error('Email already in use');
     err.statusCode = 400;
@@ -23,7 +30,7 @@ exports.register = async ({ name, email, password, role,phoneNumber  }) => {
   }).save();
 
   const token = jwt.sign(
-    { user: { id: newUser.id, role: newUser.role,phoneNumber:  newUser.phoneNumber } },
+    { user: { id: newUser.id,name: newUser.name, role: newUser.role,phoneNumber:  newUser.phoneNumber } },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
@@ -43,20 +50,20 @@ exports.login = async ({ nameOrEmail, password }) => {
   });
 
   if (!existingUser) {
-    const err = new Error('Invalid credentials');
+    const err = new Error('User not found');
     err.statusCode = 400;
     throw err;
   }
 
   const isMatch = await bcrypt.compare(password, existingUser.password);
   if (!isMatch) {
-    const err = new Error('Invalid credentials');
+    const err = new Error('Password is incorrect');
     err.statusCode = 400;
     throw err;
   }
 
   const token = jwt.sign(
-    { user: { id: existingUser.id, role: existingUser.role } },
+    { user: { id: existingUser.id, name: existingUser.name, role: existingUser.role } },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
@@ -64,34 +71,6 @@ exports.login = async ({ nameOrEmail, password }) => {
   return {
     message: 'Login successful',
     token,
-    user: { id: existingUser.id, role: existingUser.role,phoneNumber:  existingUser.phoneNumber }
+    user: { id: existingUser.id, name: existingUser.name, role: existingUser.role,phoneNumber:  existingUser.phoneNumber }
   };
 };
-
-/**
- * Logs in a user, returns { token }
- * Throws 400 on invalid credentials.
- */
-// exports.login = async ({ name, password }) => {
-//   const existingUser = await User.findOne({ name });
-//   if (!existingUser) {
-//     const err = new Error('Invalid credentials');
-//     err.statusCode = 400;
-//     throw err;
-//   }
-
-//   const isMatch = await bcrypt.compare(password, existingUser.password);
-//   if (!isMatch) {
-//     const err = new Error('Invalid credentials');
-//     err.statusCode = 400;
-//     throw err;
-//   }
-
-//   const token = jwt.sign(
-//     { user: { id: existingUser.id, role: existingUser.role } },
-//     process.env.JWT_SECRET,
-//     { expiresIn: process.env.JWT_EXPIRES_IN }
-//   );
-
-//   return { message: 'Login successful', token , user: { id: existingUser.id, role: existingUser.role}};
-// };

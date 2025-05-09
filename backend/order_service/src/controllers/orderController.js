@@ -265,3 +265,29 @@ exports.patchStatus = async (req, res, next) => {
     res.json(o);
   } catch (err) { next(err); }
 };
+
+exports.deleteOrder = async (req, res, next) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+
+    // Allow only if status is CANCELLED or DELIVERED
+    if (!['CANCELLED', 'DELIVERED'].includes(order.status)) {
+      return res.status(403).json({ message: 'Only CANCELLED or DELIVERED orders can be deleted' });
+    }
+
+    // Only allow the owner or an restaurant_admin to delete
+    if (
+      req.user.role !== 'restaurant_admin' &&
+      req.user.id !== order.customerId.toString()
+    ) {
+      return res.status(403).json({ message: 'Unauthorized to delete this order' });
+    }
+
+    await order.deleteOne();
+
+    res.json({ message: 'Order deleted successfully' });
+  } catch (err) {
+    next(err);
+  }
+};

@@ -14,6 +14,7 @@ router.get('/mine',       permitCustomer, ctrl.getMyOrders);
 router.get('/:id',         ctrl.getOrder);
 router.patch('/:id',         ctrl.updateOrder);
 router.patch('/:id/status',ctrl.patchStatus);
+router.delete('/:id', ctrl.deleteOrder);
 
 
 module.exports = router;
