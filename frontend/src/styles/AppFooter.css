@@ -41,7 +41,7 @@
 }
 
 .footer-section a:hover {
-  color: #1A5319;
+  transform: translateX(5px);
 }
 
 .social-links {
@@ -59,7 +59,6 @@
 }
 
 .social-links a:hover {
-  color: #1A5319;
   transform: translateX(5px);
 }
 
