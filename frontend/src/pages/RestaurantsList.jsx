@@ -156,7 +156,7 @@ export default function RestaurantsList() {
             <motion.div
               key={restaurant._id}
               onClick={() => handleClick(restaurant._id)}
-              className="cursor-pointer bg-green-200 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 overflow-hidden border border-green-100"
+              className="cursor-pointer bg-green-50 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 overflow-hidden border border-green-100"
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
             >
               <RestaurantCoverImage
@@ -167,9 +167,9 @@ export default function RestaurantsList() {
               />
               <div className="p-4">
                 <h3 className="text-xl font-bold text-green-800">{restaurant.name}</h3>
-                <p className="text-gray-600 text-sm mb-2">{restaurant.description || 'No description available.'}</p>
+                <p className="text-black-600 text-sm mb-2">{restaurant.description || 'No description available.'}</p>
 
-                <div className="flex items-center text-gray-500 text-sm gap-1 mb-1">
+                <div className="flex items-center text-black-500 text-sm gap-1 mb-1">
                   <LocationMarkerIcon className="w-4 h-4" />
                   <span>{restaurant.address || 'No address'}</span>
                 </div>
@@ -178,7 +178,7 @@ export default function RestaurantsList() {
                   <span className="text-green-700 font-medium">
                     {restaurant.cuisine || 'Various'}
                   </span>
-                  <span className="flex items-center gap-1 text-gray-600">
+                  <span className="flex items-center gap-1 text-black-600">
                     <CurrencyDollarIcon className="w-4 h-4" />
                     <span>{restaurant.deliveryFee?.toFixed(2) || '0.00'} Delivery</span>
                   </span>
@@ -191,7 +191,7 @@ export default function RestaurantsList() {
                     <ClockIcon className="w-4 h-4" />
                     {restaurant.availability ? 'Open Now' : 'Closed'}
                   </span>
-                  <span className="text-gray-500">Minimum Order Amount {restaurant.minimumOrderAmount}</span>
+                  <span className="text-black-500">Minimum Order Amount {restaurant.minimumOrderAmount}</span>
                 </div>
               </div>
             </motion.div>
@@ -200,7 +200,7 @@ export default function RestaurantsList() {
       )}
 
       {/* FOOTER */}
-      <div className="text-center text-sm text-gray-400 mt-12">
+      <div className="text-center text-sm text-black-400 mt-12">
         Last updated at {lastUpdated.toLocaleTimeString()}
       </div>
     </div>
