@@ -18,7 +18,7 @@ const AppFooter = () => {
 
         <div className="footer-section">
           <h3>Quick Links</h3>
-          <Link to="/">Home</Link>
+          <Link >Home</Link>
           <Link to="/restaurants">Restaurants</Link>
           <Link to="/about">About Us</Link>
           <Link to="/contact">Contact</Link>

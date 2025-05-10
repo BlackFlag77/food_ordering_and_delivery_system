@@ -1,9 +1,18 @@
 require('dotenv').config();
+const rateLimit = require('express-rate-limit');
 const express = require('express');
 const cors    = require('cors');
 const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100,
+  message: { message: 'Too many requests, please try again later.' },
+});
+app.use(limiter);
+
 app.use(cors());
 app.use(express.json());
 
