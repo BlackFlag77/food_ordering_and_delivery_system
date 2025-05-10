@@ -49,4 +49,4 @@ mongoose.connect(process.env.MONGO_URI)
       console.log("Server running at http://localhost:6000");
     });
   })
-  .catch(err => console.error('❌ MongoDB connection error:', err));
+  .catch(err => console.error('MongoDB connection error:', err));

@@ -84,7 +84,7 @@ exports.patchPaymentStatus = async (req, res, next) => {
             || order.items.map(i => i.name).join(', ')
             || `#${payment.orderId}`;
 
-    // 2) If it just succeeded, notify via email & WhatsApp
+    // If it just succeeded, notify via email & WhatsApp
     if (status === 'succeeded') {
       // a) fetch user info
       const { data: user } = await axios.get(
@@ -99,7 +99,7 @@ exports.patchPaymentStatus = async (req, res, next) => {
       const text    = `
 Hi ${name || 'Customer'},
 
-We’ve received your payment of $${amount} for order #${orderName}.
+We’ve received your payment of $${amount} for order ${orderName}.
 Thank you for your purchase!
 
 — The FoodiePortal Team
