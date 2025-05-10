@@ -1,44 +1,44 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: order-service
+  name: payment-service
   namespace: food-ordering-system
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: order-service
+      app: payment-service
   template:
     metadata:
       labels:
-        app: order-service
+        app: payment-service
     spec:
       containers:
-      - name: order-service
-        image: order-service:latest
+      - name: payment-service
+        image: payment-service:latest
         ports:
-        - containerPort: 3002
+        - containerPort: 3003
         env:
         - name: MONGODB_URI
           valueFrom:
             secretKeyRef:
               name: mongodb-secret
               key: uri
-        - name: RABBITMQ_URI
+        - name: STRIPE_SECRET_KEY
           valueFrom:
             secretKeyRef:
-              name: rabbitmq-secret
-              key: uri
+              name: stripe-secret
+              key: secret-key
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: order-service
+  name: payment-service
   namespace: food-ordering-system
 spec:
   selector:
-    app: order-service
+    app: payment-service
   ports:
   - port: 80
-    targetPort: 3002
+    targetPort: 3003
   type: ClusterIP 
