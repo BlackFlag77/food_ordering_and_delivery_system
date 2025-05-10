@@ -41,15 +41,15 @@ Distributed food ordering system with:
 
 ## Features
 ### Customer
-- ✔️ Browse restaurants/menus
-- ✔️ Cart functionality
-- ✔️ Order tracking
-- ✔️ Payment processing
+-  Browse restaurants/menus
+-  Cart functionality
+-  Order tracking
+-  Payment processing
 
 ### Restaurant
-- ✔️ Menu management (CRUD)
-- ✔️ Order management
-- ✔️ Availability control
+-  Menu management (CRUD)
+-  Order management
+-  Availability control
 
 ### Admin
 - ✔️ User management
@@ -60,14 +60,14 @@ Distributed food ordering system with:
 ### Backend
 | Technology       | Purpose                     |
 |------------------|-----------------------------|
-| Spring Boot      | Microservices framework     |
+| mern stack      | Microservices framework     |
 | MongoDB          | NoSQL database              |
-| RabbitMQ         | Asynchronous messaging      |
+| Appnet         | Asynchronous messaging      |
 | JWT              | Authentication              |
 
 ### Frontend
-- React.js with Redux
-- Material-UI components
+- React.js with vite
+- tailwind 
 - Axios for API calls
 
 ### DevOps
@@ -76,13 +76,13 @@ Distributed food ordering system with:
 - GitHub Actions CI/CD
 
 ## Services
-1. **API Gateway** - `localhost:8080`
-2. **User Service** - Authentication & authorization
-3. **Restaurant Service** - Menu management
-4. **Order Service** - Order lifecycle
-5. **Delivery Service** - Driver assignment
-6. **Payment Service** - Transaction processing
-7. **Notification Service** - Email/SMS alerts
+
+1. **User Service** - Authentication & authorization
+2. **Restaurant Service** - Menu management
+3. **Order Service** - Order lifecycle
+4. **Delivery Service** - Driver assignment
+5. **Payment Service** - Transaction processing
+5. **Notification Service** - Email/SMS alerts
 
 ## Getting Started
 ### Prerequisites
