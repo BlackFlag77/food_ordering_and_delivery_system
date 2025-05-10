@@ -20,7 +20,7 @@ services:
     container_name: order_service
     env_file: ./backend/order_service/.env
     ports: ["5001:5001"]
-    depends_on: [user_service, restaurant_service,notification_service]
+    depends_on: [user_service, restaurant_service,notification_serivce]
     networks: [app-net]
 
   payment_service:
@@ -41,8 +41,6 @@ services:
       - "7000:7000"
     depends_on:
       - user_service
-      - order_service
-      - payment_service
     networks:
       - app-net
   # notification_serivce:
@@ -65,7 +63,7 @@ services:
     container_name: frontend
     env_file: ./frontend/.env
     ports: ["3000:80"]
-    depends_on: [user_service, restaurant_service, order_service]
+    depends_on: [user_service, restaurant_service, order_service,payment_service]
     networks: [app-net]
 
 networks:
