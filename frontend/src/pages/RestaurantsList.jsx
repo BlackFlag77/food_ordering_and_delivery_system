@@ -78,7 +78,7 @@ export default function RestaurantsList() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-center mb-12 bg-gradient-to-r from-green-100 to-white py-10 px-6 rounded-3xl shadow-inner"
+        className="text-center mb-12 bg-gradient-to-r from-green-200 to-green-200 py-10 px-6 rounded-3xl shadow-inner"
       >
         <div className="flex justify-center mb-4">
           <FireIcon className="w-10 h-10 text-green-600 animate-bounce" />
