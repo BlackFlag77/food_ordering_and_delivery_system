@@ -55,7 +55,7 @@ const AppHeader = () => {
   return (
     <header className="app-header">
       <div className="header-content">
-        <Link to="/" className="logo">
+        <Link  className="logo">
           <span>🍽️</span> FoodDelivery
         </Link>
 
@@ -95,6 +95,16 @@ const AppHeader = () => {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   My Orders
+                </Link>
+              )}
+              
+              {user.role === 'customer' && (
+                <Link 
+                  to="/payments" 
+                  className={`nav-link ${isActive('/payments') ? 'active' : ''}`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  My Payment
                 </Link>
               )}
                

@@ -1,5 +1,6 @@
 // src/index.js
 require('dotenv').config();
+const rateLimit = require('express-rate-limit');
 console.log('CWD =', process.cwd());
 console.log(' JWT_SECRET =', process.env.JWT_SECRET);
 console.log('order-service JWT_SECRET is:', process.env.JWT_SECRET);
@@ -40,6 +41,14 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false,
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100,
+  message: { message: 'Too many requests, please try again later.' },
+});
+app.use(limiter);
+
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
