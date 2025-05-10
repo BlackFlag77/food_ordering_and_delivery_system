@@ -158,13 +158,34 @@ export default function RestaurantDashboard() {
 
   const handleToggleAvailability = async () => {
     try {
+      const newAvailability = !restaurant.availability;
+      
+      // Update the restaurant in the backend
       const { data: updatedRestaurant } = await restaurantApi.patch(
         `/restaurants/${restaurant._id}/availability`,
-        { availability: !restaurant.availability }
+        { availability: newAvailability }
       );
+
+      // Update the restaurant state
       setRestaurant(updatedRestaurant);
+
+      // Save to local storage to persist the change
+      const localRestaurantKey = `restaurant_${restaurant._id}`;
+      const localRestaurant = {
+        ...restaurant,
+        availability: newAvailability
+      };
+      localStorage.setItem(localRestaurantKey, JSON.stringify(localRestaurant));
+
+      // Show success message
+      console.log(`Restaurant is now ${newAvailability ? 'open' : 'closed'}`);
     } catch (error) {
       console.error('Error updating availability:', error);
+      // Revert the toggle if the update fails
+      setRestaurant(prev => ({
+        ...prev,
+        availability: !prev.availability
+      }));
     }
   };
 

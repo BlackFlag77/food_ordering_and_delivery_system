@@ -1,17 +1,8 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: restaurant-service-config
-  namespace: food-delivery
-data:
-  NODE_ENV: "development"
-  RESTAURANT_SERVICE_PORT: "4000"
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: restaurant-service
-  namespace: food-delivery
+  namespace: food-ordering-system
 spec:
   replicas: 2
   selector:
@@ -26,20 +17,23 @@ spec:
       - name: restaurant-service
         image: restaurant-service:latest
         ports:
-        - containerPort: 4000
-        envFrom:
-        - configMapRef:
-            name: restaurant-service-config
+        - containerPort: 3001
+        env:
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: uri
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: restaurant-service
-  namespace: food-delivery
+  namespace: food-ordering-system
 spec:
   selector:
     app: restaurant-service
   ports:
-  - port: 4000
-    targetPort: 4000
+  - port: 80
+    targetPort: 3001
   type: ClusterIP 
