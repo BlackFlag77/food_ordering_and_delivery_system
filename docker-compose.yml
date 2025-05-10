@@ -20,7 +20,7 @@ services:
     container_name: order_service
     env_file: ./backend/order_service/.env
     ports: ["5001:5001"]
-    depends_on: [user_service, restaurant_service]
+    depends_on: [user_service, restaurant_service,notification_service]
     networks: [app-net]
 
   payment_service:
