@@ -245,22 +245,22 @@ export default function RestaurantMenu() {
           </div>
           <button
             onClick={() => navigate(`/customer/cart?restaurantId=${restaurantId}`)}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 shadow"
+            className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700 shadow"
           >
             <ShoppingCartIcon className="w-5 h-5" />
-            View Cart
+            My Cart
           </button>
         </div>
 
         {menuItems.length > 0 ? (
-          <div className="grid sm:grid-cols-2 bg-green-50 lg:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {menuItems.map((item) => (
               <motion.div
                 key={item._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className={`p-4 border rounded-2xl shadow-sm hover:shadow-md transition duration-300 ${
+                className={`p-4 border rounded-2xl bg-green-50 shadow-sm hover:shadow-md transition duration-300 ${
                   item.isAvailable ? '' : 'opacity-60'
                 }`}
               >
