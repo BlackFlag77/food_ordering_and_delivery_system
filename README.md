@@ -9,7 +9,6 @@ A cloud-native food ordering and delivery platform built with microservices arch
 
 ## Table of Contents
 - [Project Overview](#project-overview)
-- [System Architecture](#system-architecture)
 - [Features](#features)
 - [Technology Stack](#technology-stack)
 - [Services](#services)
@@ -29,8 +28,6 @@ Distributed food ordering system with:
 - Secure payment integration
 - Automated notifications
 
-## System Architecture
-![Architecture Diagram](./docs/architecture.png)
 
 | Component          | Description                          |
 |--------------------|--------------------------------------|
@@ -52,9 +49,9 @@ Distributed food ordering system with:
 -  Availability control
 
 ### Admin
-- ✔️ User management
-- ✔️ Restaurant verification
-- ✔️ Financial oversight
+-  User management
+-  Restaurant verification
+-  Financial oversight
 
 ## Technology Stack
 ### Backend
