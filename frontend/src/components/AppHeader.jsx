@@ -55,7 +55,7 @@ const AppHeader = () => {
   return (
     <header className="app-header">
       <div className="header-content">
-        <Link to="/" className="logo">
+        <Link  className="logo">
           <span>🍽️</span> FoodDelivery
         </Link>
 

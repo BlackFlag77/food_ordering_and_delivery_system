@@ -155,7 +155,6 @@ export default function LoginPage() {
               <label className="flex items-center text-sm">
                 <input
                   type="checkbox"
-                  required
                   className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
                 />
                 <span className="ml-2 text-gray-700">Remember me</span>
