@@ -200,52 +200,71 @@ export default function RestaurantSettings({ restaurant, onUpdate }) {
     }));
   };
 
-  const handleLogoUpload = (imageUrl) => {
-    // Update the form state
-    setForm(prev => ({
-      ...prev,
-      logoUrl: imageUrl
-    }));
-    
-    // Clear any existing messages to prevent confusion
-    setMessage({ type: '', text: '' });
-    
-    // Immediately update the UI with the new image
-    const updatedRestaurant = {
-      ...restaurant,
-      logoUrl: imageUrl
-    };
-    onUpdate(updatedRestaurant);
-  };
-
-  const handleCoverImageUpload = (imageUrl) => {
-    console.log('Cover image uploaded:', imageUrl);
-    
-    // Update the form state
-    setForm(prev => ({
-      ...prev,
-      coverImageUrl: imageUrl
-    }));
-    
-    // Clear any existing messages to prevent confusion
-    setMessage({ type: '', text: '' });
-    
-    // Immediately update the UI with the new image
-    const updatedRestaurant = {
-      ...restaurant,
-      coverImageUrl: imageUrl
-    };
-    
-    // Force update the restaurant in the parent component
-    onUpdate(updatedRestaurant);
-    
-    // Also update the restaurant in local storage directly
+  const handleLogoUpload = async (imageUrl) => {
     try {
+      // Update the form state
+      setForm(prev => ({
+        ...prev,
+        logoUrl: imageUrl
+      }));
+      
+      // Clear any existing messages
+      setMessage({ type: '', text: '' });
+      
+      // Update the restaurant in the backend
+      const { data: updatedRestaurant } = await restaurantApi.patch(
+        `/restaurants/${restaurant._id}`,
+        { logoUrl: imageUrl }
+      );
+      
+      // Update the restaurant in the parent component
+      onUpdate(updatedRestaurant);
+      
+      // Save to local storage
       const restaurantKey = `restaurant_${restaurant._id}`;
       localStorage.setItem(restaurantKey, JSON.stringify(updatedRestaurant));
-      console.log('Saved restaurant to local storage:', updatedRestaurant);
+      
+      console.log('Logo updated successfully');
     } catch (error) {
-      console.error('Error saving restaurant to local storage:', error);
+      console.error('Error updating logo:', error);
+      setMessage({ 
+        type: 'error', 
+        text: 'Failed to update logo. Please try again.' 
+      });
+    }
+  };
+
+  const handleCoverImageUpload = async (imageUrl) => {
+    try {
+      // Update the form state
+      setForm(prev => ({
+        ...prev,
+        coverImageUrl: imageUrl
+      }));
+      
+      // Clear any existing messages
+      setMessage({ type: '', text: '' });
+      
+      // Update the restaurant in the backend
+      const { data: updatedRestaurant } = await restaurantApi.patch(
+        `/restaurants/${restaurant._id}`,
+        { coverImageUrl: imageUrl }
+      );
+      
+      // Update the restaurant in the parent component
+      onUpdate(updatedRestaurant);
+      
+      // Save to local storage
+      const restaurantKey = `restaurant_${restaurant._id}`;
+      localStorage.setItem(restaurantKey, JSON.stringify(updatedRestaurant));
+      
+      console.log('Cover image updated successfully');
+    } catch (error) {
+      console.error('Error updating cover image:', error);
+      setMessage({ 
+        type: 'error', 
+        text: 'Failed to update cover image. Please try again.' 
+      });
     }
   };
 

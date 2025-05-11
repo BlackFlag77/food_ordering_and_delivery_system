@@ -34,6 +34,19 @@ exports.update = async (req, res, next) => {
     const r = await Restaurant.findById(req.params.id);
     if (!r) return res.status(404).end();
     if (r.userId.toString() !== req.user.id) return res.status(403).end();
+
+    // Extract image URLs from request body
+    const { logoUrl, coverImageUrl } = req.body;
+    
+    // Validate image URLs
+    if (logoUrl && !logoUrl.startsWith('data:image') && !logoUrl.startsWith('http')) {
+      return res.status(400).json({ error: 'Invalid logo URL format' });
+    }
+    if (coverImageUrl && !coverImageUrl.startsWith('data:image') && !coverImageUrl.startsWith('http')) {
+      return res.status(400).json({ error: 'Invalid cover image URL format' });
+    }
+
+    // Update the restaurant with all fields
     Object.assign(r, req.body);
     await r.save();
     res.json(r);
@@ -56,10 +69,19 @@ exports.setAvailability = async (req, res, next) => {
     const r = await Restaurant.findById(req.params.id);
     if (!r) return res.status(404).end();
     if (r.userId.toString() !== req.user.id) return res.status(403).end();
+    
+    // Set the new availability status
     r.availability = !!req.body.availability;
+    
+    // Save the changes
     await r.save();
+    
+    // Return the updated restaurant
     res.json(r);
-  } catch (err) { next(err); }
+  } catch (err) { 
+    console.error('Error updating restaurant availability:', err);
+    next(err); 
+  }
 };
 
 exports.getStats = async (req, res, next) => {
